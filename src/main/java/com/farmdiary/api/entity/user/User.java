@@ -24,7 +24,7 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user")
     private List<Diary> diaries = new ArrayList<>();
 
-    @Column(length = 50, unique = true, nullable = false)
+    @Column(length = 45, unique = true, nullable = false)
     private String nickname;
 
     @Column(length = 50, unique = true, nullable = false)

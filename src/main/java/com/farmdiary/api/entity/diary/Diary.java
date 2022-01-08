@@ -70,34 +70,50 @@ public class Diary extends BaseTimeEntity {
     }
 
     public void updateTitle(String title) {
-        this.title = title;
+        if (null != title && !title.isBlank()) {
+            this.title = title;
+        }
     }
 
     public void updateWorkDay(LocalDate workDay) {
-        this.workDay = workDay;
+        if (null != workDay) {
+            this.workDay = workDay;
+        }
     }
 
     public void updateField(String field) {
-        this.field = field;
+        if (null != field && !field.isBlank()) {
+            this.field = field;
+        }
     }
 
     public void updateCrop(String crop) {
-        this.crop = crop;
+        if (null != crop && !crop.isBlank()) {
+            this.crop = crop;
+        }
     }
 
     public void updateTemperature(Double temperature) {
-        this.temperature = temperature;
+        if (null != temperature) {
+            this.temperature = temperature;
+        }
     }
 
     public void updateWeather(Weather weather) {
-        this.weather = weather;
+        if (null != weather) {
+            this.weather = weather;
+        }
     }
 
     public void updatePrecipitation(Integer precipitation) {
-        this.precipitation = precipitation;
+        if (null != precipitation && precipitation >= 0) {
+            this.precipitation = precipitation;
+        }
     }
 
     public void updateWorkDetail(String workDetail) {
-        this.workDetail = workDetail;
+        if (null != workDetail && !workDetail.isBlank()) {
+            this.workDetail = workDetail;
+        }
     }
 }

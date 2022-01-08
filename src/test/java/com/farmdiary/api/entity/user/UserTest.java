@@ -1,11 +1,10 @@
 package com.farmdiary.api.entity.user;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class UserTest {
     
@@ -32,6 +31,6 @@ class UserTest {
         user.verifyEmail();
 
         // then
-        Assertions.assertThat(user.isEmailVerified()).isTrue();
+        assertThat(user.isEmailVerified()).isTrue();
     }
 }
