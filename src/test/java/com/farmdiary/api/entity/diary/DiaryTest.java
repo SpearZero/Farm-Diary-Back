@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -221,7 +222,7 @@ class DiaryTest {
     @DisplayName("영농일지 날씨 변경 확인")
     public void update_diary_weather_then_changed_diary_weather() {
         // given
-        Weather changedWeather = Weather.RAINY;
+        Optional<Weather> changedWeather = Optional.of(Weather.RAINY);
 
         // when
         diary.updateWeather(changedWeather);
@@ -234,7 +235,7 @@ class DiaryTest {
     @DisplayName("영농일지 날씨가 null일경우 변경되지 않음")
     public void update_diary_weather_null_then_diary_weather_not_changed() {
         // given
-        Weather changedWeather = null;
+        Optional<Weather> changedWeather = Optional.empty();
 
         // when
         diary.updateWeather(changedWeather);

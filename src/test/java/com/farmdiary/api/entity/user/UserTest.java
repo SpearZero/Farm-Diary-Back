@@ -25,7 +25,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("이메일 인증 확인")
+    @DisplayName("이메일 인증 확인시 인증이 성공")
     public void verify_email_then_verified() {
         // when
         user.verifyEmail();

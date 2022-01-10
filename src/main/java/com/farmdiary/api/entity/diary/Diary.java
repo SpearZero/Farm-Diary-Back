@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -99,10 +100,8 @@ public class Diary extends BaseTimeEntity {
         }
     }
 
-    public void updateWeather(Weather weather) {
-        if (null != weather) {
-            this.weather = weather;
-        }
+    public void updateWeather(Optional<Weather> weather) {
+        this.weather = weather.orElseGet(this::getWeather);
     }
 
     public void updatePrecipitation(Integer precipitation) {

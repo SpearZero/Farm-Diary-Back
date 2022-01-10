@@ -3,6 +3,8 @@ package com.farmdiary.api.entity.diary;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Optional;
+
 @Getter
 @AllArgsConstructor
 public enum Weather {
@@ -16,12 +18,12 @@ public enum Weather {
     private String viewName;
     private String code;
 
-    static Weather weather(String code) {
-        if (null == code || code.isBlank()) return Weather.ETC;
+    static Optional<Weather> weather(String code) {
+        if (null == code || code.isBlank()) return Optional.empty();
 
         for (Weather weather : values()) {
             if (code.equals(weather.getCode())) {
-                return weather;
+                return Optional.of(weather);
             }
         }
 

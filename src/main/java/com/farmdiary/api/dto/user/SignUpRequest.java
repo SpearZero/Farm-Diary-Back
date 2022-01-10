@@ -16,7 +16,7 @@ public class SignUpRequest {
 
     @NotBlank
     @Pattern(regexp = "^[가-힣a-zA-Z0-9]{1,15}$", message = "한글,영어,숫자 1~15자리를 입력해주세요")
-    private String nickName;
+    private String nickname;
 
     @NotBlank
     @Email
@@ -29,6 +29,7 @@ public class SignUpRequest {
     )
     private String password;
 
+    /*
     public User toEntity(){
         return User.builder()
                 .email(email)
@@ -36,4 +37,5 @@ public class SignUpRequest {
                 .password(password)
                 .build();
     }
+     */
 }
