@@ -21,9 +21,6 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @OneToMany(mappedBy = "user")
-    private List<Diary> diaries = new ArrayList<>();
-
     @Column(length = 45, unique = true, nullable = false)
     private String nickname;
 
@@ -38,6 +35,12 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = false)
     private boolean emailVerified = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserRole> userRoles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Diary> diaries = new ArrayList<>();
 
     @Builder
     public User(String nickName, String email, String password) {

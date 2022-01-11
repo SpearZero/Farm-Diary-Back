@@ -1,6 +1,7 @@
 package com.farmdiary.api.exception;
 
 import com.farmdiary.api.dto.exception.ErrorDetails;
+import com.farmdiary.api.dto.exception.Result;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", exception.getMessage());
 
-        ErrorDetails.Result result = new ErrorDetails.Result<Map>(errors);
+        Result result = new Result<Map>(errors);
 
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
                 result, webRequest.getDescription(false));
@@ -47,7 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             errors.put(fieldName, message);
         });
 
-        ErrorDetails.Result result = new ErrorDetails.Result<Map>(errors);
+        Result result = new Result<Map>(errors);
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
                 result, webRequest.getDescription(false));
 

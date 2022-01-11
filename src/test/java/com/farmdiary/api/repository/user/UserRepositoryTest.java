@@ -1,13 +1,13 @@
-package com.farmdiary.api.repository.diary;
+package com.farmdiary.api.repository.user;
 
 import com.farmdiary.api.entity.user.User;
+import com.farmdiary.api.repository.user.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -32,15 +32,20 @@ class UserRepositoryTest {
 
         userRepository.save(user);
     }
+
+    @AfterEach
+    public void tearDown() {
+        userRepository.deleteAll();
+    }
     
     @Test
     @DisplayName("회원의 닉네임으로 회원 조회시 조회 성공")
     public void search_user_nickname_then_searched() {
         String searchNickName = nickname;
 
-        Optional<User> byNickName = userRepository.findByNickname(searchNickName);
+        Boolean result = userRepository.existsByNickname(searchNickName);
 
-        assertThat(byNickName.get()).isNotNull();
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -48,8 +53,8 @@ class UserRepositoryTest {
     public void search_user_email_then_searched() {
         String searchEmail = email;
 
-        Optional<User> byEmail = userRepository.findByEmail(searchEmail);
+        Boolean result = userRepository.existsByEmail(searchEmail);
 
-        assertThat(byEmail.get()).isNotNull();
+        assertThat(result).isTrue();
     }
 }

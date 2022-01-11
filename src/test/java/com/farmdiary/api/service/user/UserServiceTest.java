@@ -4,7 +4,7 @@ import com.farmdiary.api.dto.user.SignUpRequest;
 import com.farmdiary.api.dto.user.SignUpResponse;
 import com.farmdiary.api.entity.user.User;
 import com.farmdiary.api.exception.DiaryApiException;
-import com.farmdiary.api.repository.diary.UserRepository;
+import com.farmdiary.api.repository.user.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,7 +40,7 @@ class UserServiceTest {
         SignUpRequest signUpRequest = new SignUpRequest(nickName, email, password);
         User user = new User(nickName, email, password);
 
-        when(userRepository.findByNickname(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.existsByNickname(anyString())).thenReturn(Boolean.TRUE);
 
         // when, then
         assertThrows(DiaryApiException.class, () -> userService.save(signUpRequest));
@@ -55,8 +53,8 @@ class UserServiceTest {
         SignUpRequest signUpRequest = new SignUpRequest(nickName, email, password);
         User user = new User(nickName, email, password);
 
-        when(userRepository.findByNickname(anyString())).thenReturn(Optional.empty());
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.existsByNickname(anyString())).thenReturn(Boolean.FALSE);
+        when(userRepository.existsByEmail(anyString())).thenReturn(Boolean.TRUE);
 
         // when, then
         assertThrows(DiaryApiException.class, () -> userService.save(signUpRequest));
@@ -72,8 +70,8 @@ class UserServiceTest {
         Long userId = 1L;
         ReflectionTestUtils.setField(signUpUser, "id", userId);
 
-        when(userRepository.findByNickname(anyString())).thenReturn(Optional.empty());
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(userRepository.existsByNickname(anyString())).thenReturn(Boolean.FALSE);
+        when(userRepository.existsByEmail(anyString())).thenReturn(Boolean.FALSE);
         when(userRepository.save(any(User.class))).thenReturn(signUpUser);
 
         // when
