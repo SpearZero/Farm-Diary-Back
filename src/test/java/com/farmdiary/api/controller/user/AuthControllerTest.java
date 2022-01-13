@@ -4,6 +4,7 @@ package com.farmdiary.api.controller.user;
 import com.farmdiary.api.dto.user.SignUpRequest;
 import com.farmdiary.api.dto.user.SignUpResponse;
 import com.farmdiary.api.entity.user.User;
+import com.farmdiary.api.security.service.UserDetailsServiceImpl;
 import com.farmdiary.api.service.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +30,9 @@ class AuthControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private UserDetailsServiceImpl userdetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;

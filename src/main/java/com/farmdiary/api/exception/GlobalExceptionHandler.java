@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -27,10 +26,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", exception.getMessage());
 
-        Result result = new Result<Map>(errors);
+        Result message = Result.builder().description(errors).build();
 
-        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
-                result, webRequest.getDescription(false));
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .timestamp(LocalDateTime.now())
+                .message(message)
+                .details(webRequest.getDescription(false))
+                .build();
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
@@ -48,9 +50,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             errors.put(fieldName, message);
         });
 
-        Result result = new Result<Map>(errors);
-        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
-                result, webRequest.getDescription(false));
+        Result message = Result.builder().description(errors).build();
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .timestamp(LocalDateTime.now())
+                .message(message)
+                .details(webRequest.getDescription(false))
+                .build();
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
