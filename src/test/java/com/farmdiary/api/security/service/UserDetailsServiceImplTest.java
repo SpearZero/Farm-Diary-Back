@@ -1,9 +1,7 @@
-package com.farmdiary.api.service.user;
+package com.farmdiary.api.security.service;
 
 import com.farmdiary.api.entity.user.User;
 import com.farmdiary.api.repository.user.UserRepository;
-import com.farmdiary.api.security.service.UserDetailsImpl;
-import com.farmdiary.api.security.service.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
