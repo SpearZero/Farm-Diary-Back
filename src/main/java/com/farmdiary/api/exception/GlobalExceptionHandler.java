@@ -26,8 +26,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", exception.getMessage());
 
-        Result message = Result.builder().description(errors).build();
-
+        Result<Map> message = new Result<Map>(errors);
         ErrorDetails errorDetails = ErrorDetails.builder()
                 .timestamp(LocalDateTime.now())
                 .message(message)
@@ -50,7 +49,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             errors.put(fieldName, message);
         });
 
-        Result message = Result.builder().description(errors).build();
+        Result<Map> message = new Result<Map>(errors);
         ErrorDetails errorDetails = ErrorDetails.builder()
                 .timestamp(LocalDateTime.now())
                 .message(message)

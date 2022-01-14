@@ -35,7 +35,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("회원 가입시 유저 닉네임이 중복되면 DiaryAPIException 예외 발생")
-    public void user_nickname_duplicated_then_throw_DiaryApiException() {
+    void user_nickname_duplicated_then_throw_DiaryApiException() {
         // given
         SignUpRequest signUpRequest = new SignUpRequest(nickName, email, password);
         User user = new User(nickName, email, password);
@@ -48,7 +48,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("회원 가입시 유저 메일이 중복되면 DiaryAPIException 예외 발생")
-    public void user_email_duplicated_then_throw_DiaryApiException() {
+    void user_email_duplicated_then_throw_DiaryApiException() {
         // given
         SignUpRequest signUpRequest = new SignUpRequest(nickName, email, password);
         User user = new User(nickName, email, password);
@@ -62,7 +62,7 @@ class UserServiceTest {
     
     @Test
     @DisplayName("회원 가입시 중복된 정보(닉네임, 이메일)이 없으면 가입 성공")
-    public void not_have_duplicated_information_then_signup_success() {
+    void not_have_duplicated_information_then_signup_success() {
         // given
         SignUpRequest signUpRequest = new SignUpRequest(nickName, email, password);
 

@@ -16,7 +16,7 @@ class WeatherTest {
     @ParameterizedTest(name = "{index} - input code = {0}")
     @ValueSource(strings = {"00", "01", "02", "03", "04"})
     @DisplayName("코드값이 들어왔을 때 Weather Enum 반환")
-    public void input_code_then_return_enum_Weather(String code) {
+    void input_code_then_return_enum_Weather(String code) {
         // when
         Optional<Weather> weather = Weather.weather(code);
 
@@ -27,7 +27,7 @@ class WeatherTest {
     @ParameterizedTest(name = "{index} - input code = {0}(blank)")
     @ValueSource(strings = {"", " ", "  "})
     @DisplayName("코드값이 공백으로 들어왔을 때 Optional.empty 반환")
-    public void input_blank_then_return_enum_Weather_ETC(String code) {
+    void input_blank_then_return_enum_Weather_ETC(String code) {
         // when
         Optional<Weather> weather = Weather.weather(code);
 
@@ -37,7 +37,7 @@ class WeatherTest {
 
     @Test
     @DisplayName("코드값이 null로 들어왔을 때 Optional.empty 반환")
-    public void input_null_then_return_enum_Weather_ETC() {
+    void input_null_then_return_enum_Weather_ETC() {
         // given
         String nullCode = null;
 
@@ -50,7 +50,7 @@ class WeatherTest {
 
     @Test
     @DisplayName("잘못된 코드값이 들어왔을 때 IllegalArgumentException 예외 반환")
-    public void input_wrong_code_then_return_exception() {
+    void input_wrong_code_then_return_exception() {
         // given
         String wrongCode = "1234";
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Component
@@ -35,26 +36,20 @@ public class JwtUtils {
                 .getBody().getSubject();
     }
 
-    public boolean validateJwtToken(String authToken) {
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            return true;
-        } catch (SignatureException e) {
-            // JWT의 시그니처 검증이 실패할 경우
-            log.error("Invalid JWT signature : {}", e.getMessage());
-        } catch (MalformedJwtException e) {
-            // 구조적으로 문제가 있는 경우
-            log.error("Invalid JWT token : {}", e.getMessage());
-        } catch (ExpiredJwtException e) {
-            // 유효기간이 만료
-            log.error("JWT token is expired : {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            // 수신한 JWT의 형식이 애플리케이션에서 원하는 형식과 맞지 않을 경우
-            log.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.error("JWT claims string is empty : {}", e.getMessage());
-        }
+    /**
+     *
+     * @param authToken
+     * @return boolean
+     * @throw ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException
+     *
+     * 이 메서드를 사용하는 곳에서 예외를 처리해줘야 한다.
+     * Jwt 라이브러리에서 각각의 예외를 확인하는 메서드가 존재하지 않음.
+     */
+    public boolean validateJwtToken(String authToken) throws ExpiredJwtException, UnsupportedJwtException,
+            MalformedJwtException, SignatureException, IllegalArgumentException{
 
-        return false;
+        Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+        return true;
     }
+
 }

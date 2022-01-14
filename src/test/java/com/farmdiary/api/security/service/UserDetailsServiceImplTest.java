@@ -29,7 +29,7 @@ class UserDetailsServiceImplTest {
 
     @Test
     @DisplayName("존재하지 않는 이메일로 조회시 UsernameNotFoundException 반환")
-    public void search_not_exists_email_then_return_exception() {
+    void search_not_exists_email_then_return_exception() {
         // given
         String email = "email@email.com";
 
@@ -41,7 +41,7 @@ class UserDetailsServiceImplTest {
 
     @Test
     @DisplayName("존재하는 이메일로 조회시 UserDetails 반환")
-    public void search_exists_email_then_return_userdetails() {
+    void search_exists_email_then_return_userdetails() {
         // given
         String email = "email@email.com";
         String password = "passW0rd1!";

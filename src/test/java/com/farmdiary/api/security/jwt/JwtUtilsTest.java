@@ -2,6 +2,10 @@ package com.farmdiary.api.security.jwt;
 
 import com.farmdiary.api.entity.user.User;
 import com.farmdiary.api.security.service.UserDetailsImpl;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +46,8 @@ class JwtUtilsTest {
 
     @Test
     @DisplayName("인증된 유저정보가 전달되면 JWT 토큰 생성")
-    public void pass_verified_userdetails_then_create_jwttoken() {
+    void pass_verified_userdetails_then_create_jwttoken() {
+        // given
         setJwtTokenInfo(jwtSecret, jwtExpiration);
 
         // when
@@ -54,7 +59,8 @@ class JwtUtilsTest {
 
     @Test
     @DisplayName("JWT 토큰으로부터 이메일 추출")
-    public void pass_token_then_return_email() {
+    void pass_token_then_return_email() {
+        // given
         setJwtTokenInfo(jwtSecret, jwtExpiration);
 
         // when
@@ -67,11 +73,12 @@ class JwtUtilsTest {
 
     @Test
     @DisplayName("정상적인 JWT 토큰이 전달될 경우 true 반환")
-    public void token_verify_success_then_return_true() {
+    void token_verify_success_then_return_true() {
+        // given
         setJwtTokenInfo(jwtSecret, jwtExpiration);
+        String jwtToken = jwtUtils.generateJwtToken(authentication);
 
         // when
-        String jwtToken = jwtUtils.generateJwtToken(authentication);
         boolean result = jwtUtils.validateJwtToken(jwtToken);
 
         // then
@@ -79,53 +86,46 @@ class JwtUtilsTest {
     }
 
     @Test
-    @DisplayName("JWT의 시그니처 검증이 실패할 경우 false 반환")
-    public void signature_verify_fail_then_return_false() {
+    @DisplayName("JWT의 시그니처 검증이 실패할 경우 SignatureException 반환")
+    void signature_verify_fail_then_throw_SignatureException() {
+        // given
         setJwtTokenInfo(jwtSecret, jwtExpiration);
-
-        // when
         String jwtToken = jwtUtils.generateJwtToken(authentication);
-
         ReflectionTestUtils.setField(jwtUtils, "jwtSecret", invalidJwtSecret);
-        boolean result = jwtUtils.validateJwtToken(jwtToken);
 
-        // then
-        assertThat(result).isFalse();
+        // when, then
+        Assertions.assertThrows(SignatureException.class, () -> jwtUtils.validateJwtToken(jwtToken));
     }
     
     @Test
-    @DisplayName("JWT의 구조적인 문제가 있는경우 false 반환")
-    public void formed_verify_fail_then_return_false() {
-        // when
-        boolean result = jwtUtils.validateJwtToken("malformed");
+    @DisplayName("JWT의 구조적인 문제가 있는경우 MalformedJwtException 반환")
+    void formed_verify_fail_then_throw_MalformedJwtException() {
+        // given
+        setJwtTokenInfo(jwtSecret, jwtExpiration);
+        String jwtToken = "Bearer " + jwtUtils.generateJwtToken(authentication);
 
-        // then
-        assertThat(result).isFalse();
+        // when, then
+        Assertions.assertThrows(MalformedJwtException.class, () -> jwtUtils.validateJwtToken(jwtToken));
     }
     
     @Test
-    @DisplayName("JWT의 유효기간이 만료된 경우 false 반환")
-    public void jwt_expired_then_return_false() {
+    @DisplayName("JWT의 유효기간이 만료된 경우 ExpiredJwtException 반환")
+    void jwt_expired_then_throw_ExpiredJwtException() {
+        // given
         setJwtTokenInfo(jwtSecret, jwtExpiredExpiration);
-
-        // when
         String jwtToken = jwtUtils.generateJwtToken(authentication);
-        boolean result = jwtUtils.validateJwtToken(jwtToken);
 
-        // then
-        assertThat(result).isFalse();
+        // when, then
+        Assertions.assertThrows(ExpiredJwtException.class, () -> jwtUtils.validateJwtToken(jwtToken));
     }
 
     @Test
-    @DisplayName("JWT값으로 공백이 전달될 경우 false 반환")
-    public void blank_verity_fail_then_return_false() {
+    @DisplayName("JWT값으로 공백이 전달될 경우 IllegalArgumentException 반환")
+    void blank_verity_fail_then_throw_IllegalArgumentException() {
         // given
         String token = "";
 
-        // when
-        boolean result = jwtUtils.validateJwtToken(token);
-
-        // then
-        assertThat(result).isFalse();
+        // when, then
+        Assertions.assertThrows(IllegalArgumentException.class, () -> jwtUtils.validateJwtToken(token));
     }
 }

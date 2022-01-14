@@ -31,7 +31,7 @@ class DiaryTest {
     private User user;
 
     @BeforeEach
-    public void setUpDiary() {
+    void setUpDiary() {
         user = User.builder()
                 .nickName(nickName)
                 .email(email)
@@ -51,7 +51,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 제목 변경 확인")
-    public void update_diary_title_then_changed_diary_title() {
+    void update_diary_title_then_changed_diary_title() {
         // given
         String changedTitle = "changedTitle";
 
@@ -64,7 +64,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 제목이 null일경우 변경되지 않음")
-    public void update_diary_title_null_then_diary_title_not_changed() {
+    void update_diary_title_null_then_diary_title_not_changed() {
         // given
         String changedTitle = null;
 
@@ -77,7 +77,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 제목이 공백일 경우 변경되지 않음")
-    public void update_diary_title_blank_then_diary_title_not_changed() {
+    void update_diary_title_blank_then_diary_title_not_changed() {
         // given
         String changedTitle = " ";
 
@@ -90,7 +90,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작업날짜 변경 확인")
-    public void update_diary_workDay_then_changed_diary_workDay() {
+    void update_diary_workDay_then_changed_diary_workDay() {
         // given
         LocalDate changedWorkDay = LocalDate.of(2022,01,04);
 
@@ -103,7 +103,7 @@ class DiaryTest {
     
     @Test
     @DisplayName("영농일지 작업날짜가 null일경우 변경되지 않음")
-    public void update_diary_workDay_null_then_diary_workDay_not_changed() {
+    void update_diary_workDay_null_then_diary_workDay_not_changed() {
         // given
         LocalDate changedWorkDay = null;
 
@@ -116,7 +116,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작업필지 변경 확인")
-    public void update_diary_field_then_changed_diary_field() {
+    void update_diary_field_then_changed_diary_field() {
         // given
         String changedField = "changedField";
 
@@ -129,7 +129,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작업필지가 null일경우 변경되지 않음")
-    public void update_diary_field_null_then_diary_field_not_changed() {
+    void update_diary_field_null_then_diary_field_not_changed() {
         // given
         String changedField = null;
 
@@ -142,7 +142,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작업필지가 공백일 경우 변경되지 않음")
-    public void update_diary_field_blank_then_diary_field_not_changed() {
+    void update_diary_field_blank_then_diary_field_not_changed() {
         // given
         String changedField = " ";
 
@@ -155,7 +155,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작목 변경 확인")
-    public void update_diary_crop_then_changed_diary_crop() {
+    void update_diary_crop_then_changed_diary_crop() {
         // given
         String changedCrop = "changedCrop";
 
@@ -168,7 +168,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작목이 null일경우 변경되지 않음")
-    public void update_diary_crop_null_then_diary_crop_not_changed() {
+    void update_diary_crop_null_then_diary_crop_not_changed() {
         // given
         String changedCrop = null;
 
@@ -181,7 +181,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작목이 공백일 경우 변경되지 않음")
-    public void update_diary_crop_blank_then_diary_crop_not_changed() {
+    void update_diary_crop_blank_then_diary_crop_not_changed() {
         // given
         String changedCrop = " ";
 
@@ -194,7 +194,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 기온 변경 확인")
-    public void update_diary_temperature_then_changed_diary_temperature() {
+    void update_diary_temperature_then_changed_diary_temperature() {
         // given
         Double changedTemperature = 0.1;
 
@@ -207,7 +207,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 기온이 null일경우 변경되지 않음")
-    public void update_diary_temperature_null_then_diary_temperature_not_changed() {
+    void update_diary_temperature_null_then_diary_temperature_not_changed() {
         // given
         Double changedTemperature = null;
 
@@ -220,7 +220,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 날씨 변경 확인")
-    public void update_diary_weather_then_changed_diary_weather() {
+    void update_diary_weather_then_changed_diary_weather() {
         // given
         Optional<Weather> changedWeather = Optional.of(Weather.RAINY);
 
@@ -233,7 +233,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 날씨가 null일경우 변경되지 않음")
-    public void update_diary_weather_null_then_diary_weather_not_changed() {
+    void update_diary_weather_null_then_diary_weather_not_changed() {
         // given
         Optional<Weather> changedWeather = Optional.empty();
 
@@ -246,7 +246,7 @@ class DiaryTest {
     
     @Test
     @DisplayName("영농일지 강수량 변경 확인")
-    public void update_diary_precipitation_then_changed_diary_precipitation() {
+    void update_diary_precipitation_then_changed_diary_precipitation() {
         // given
         Integer changedPrecipitation = 10;
 
@@ -259,7 +259,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 강수량이 null일경우 변경되지 않음")
-    public void update_diary_precipitation_null_then_diary_precipitation_not_changed() {
+    void update_diary_precipitation_null_then_diary_precipitation_not_changed() {
         // given
         Integer changedPrecipitation = null;
 
@@ -272,7 +272,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 강수량이 0미만일 경우 변경되지 않음")
-    public void update_diary_precipitation_minus_then_diary_precipitation_not_changed() {
+    void update_diary_precipitation_minus_then_diary_precipitation_not_changed() {
         // given
         Integer changedPrecipitation = -1;
 
@@ -285,7 +285,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작업내용 변경 확인")
-    public void update_diary_workDetail_then_changed_diary_workDetail() {
+    void update_diary_workDetail_then_changed_diary_workDetail() {
         // given
         String changedWorkDetail = "changedWorkDetail";
 
@@ -298,7 +298,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작업내용이 null일경우 변경되지 않음")
-    public void update_diary_workDeatil_null_then_diary_workDetail_not_changed() {
+    void update_diary_workDeatil_null_then_diary_workDetail_not_changed() {
         // given
         String changedWorkDetail = null;
 
@@ -311,7 +311,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작업내용이 공백일 경우 변경되지 않음")
-    public void update_diary_workDetail_blank_then_diary_workDetail_not_changed() {
+    void update_diary_workDetail_blank_then_diary_workDetail_not_changed() {
         // given
         String changedWorkDetail = " ";
 
@@ -324,7 +324,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("유저가 null이면 연관관계 설정이 되지않음")
-    public void user_null_then_user_not_set() {
+    void user_null_then_user_not_set() {
         // given
         User nullUser = null;
 
@@ -337,7 +337,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("유저가 인증되지 않으면 연관관계 설정이 되지 않음")
-    public void user_not_verified_then_user_not_set() {
+    void user_not_verified_then_user_not_set() {
         // when
         diary.setUser(user);
 
@@ -347,7 +347,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("유저가 null이 아니고 인증되면 연관관계 설정")
-    public void user_verified_and_not_null_user_set() {
+    void user_verified_and_not_null_user_set() {
         // given
         user.verifyEmail();
 

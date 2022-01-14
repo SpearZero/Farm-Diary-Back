@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 public class Result<T> {
     private final T description;
 
-    @Builder
     public Result(T description) {
         this.description = description;
     }

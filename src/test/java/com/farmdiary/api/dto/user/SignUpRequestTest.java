@@ -20,7 +20,7 @@ class SignUpRequestTest {
     private static Validator validator;
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
@@ -40,7 +40,7 @@ class SignUpRequestTest {
     @ParameterizedTest(name = "{index} - input nickname = {0}")
     @MethodSource("invalidNickName")
     @DisplayName("닉네임 조건이 만족하지 않을경우 검증 실패")
-    public void signUpRequest_nickname_invalid_then_signUpRequest_nickname_fail(String nickName){
+    void signUpRequest_nickname_invalid_then_signUpRequest_nickname_fail(String nickName){
         // given
         String email = "exam@exam.com";
         String password = "passwWord123!";
@@ -68,7 +68,7 @@ class SignUpRequestTest {
     @ParameterizedTest(name = "{index} - input nickname = {0}")
     @MethodSource("validNickName")
     @DisplayName("닉네임 조건이 만족할 경우 검증 성공")
-    public void signupRequest_nickname_valid_then_signUpRequest_nickname_true(String nickName) {
+    void signupRequest_nickname_valid_then_signUpRequest_nickname_true(String nickName) {
         // given
         String email = "exam@exam.com";
         String password = "passwWord123!";
@@ -99,7 +99,7 @@ class SignUpRequestTest {
     @ParameterizedTest(name = "{index} - input password = {0}")
     @MethodSource("invalidPassword")
     @DisplayName("패스워드 조건이 만족하지 않을경우 검증 실패")
-    public void signupRequest_password_invalid_then_signUpRequest_password_false(String password) {
+    void signupRequest_password_invalid_then_signUpRequest_password_false(String password) {
         // given
         String nickName = "nickName";
         String email = "exam@exam.com";
@@ -125,7 +125,7 @@ class SignUpRequestTest {
     @ParameterizedTest(name = "{index} - input password = {0}")
     @MethodSource("validPassword")
     @DisplayName("패스워드 조건이 만족할 경우 검증 성공")
-    public void signupRequest_password_valid_then_signUpRequest_passowrd_true(String password) {
+    void signupRequest_password_valid_then_signUpRequest_passowrd_true(String password) {
         // given
         String nickName = "nickName";
         String email = "exam@exam.com";

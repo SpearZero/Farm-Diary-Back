@@ -2,7 +2,6 @@ package com.farmdiary.api.security.service;
 
 import com.farmdiary.api.entity.user.User;
 import com.farmdiary.api.repository.user.UserRepository;
-import com.farmdiary.api.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

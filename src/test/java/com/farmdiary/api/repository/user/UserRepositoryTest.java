@@ -26,7 +26,7 @@ class UserRepositoryTest {
     private final String password = "password";
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         User user = User.builder()
                 .nickName(nickname)
                 .email(email)
@@ -37,13 +37,13 @@ class UserRepositoryTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         userRepository.deleteAll();
     }
     
     @Test
     @DisplayName("회원의 닉네임으로 회원 조회시 조회 성공")
-    public void search_user_nickname_then_searched() {
+    void search_user_nickname_then_searched() {
         // given
         String searchNickName = nickname;
 
@@ -56,7 +56,7 @@ class UserRepositoryTest {
 
     @Test
     @DisplayName("회원의 이메일로 회원 조회시 조회 성공")
-    public void search_user_email_then_searched() {
+    void search_user_email_then_searched() {
         // givven
         String searchEmail = email;
 
@@ -69,7 +69,7 @@ class UserRepositoryTest {
     
     @Test
     @DisplayName("회원의 이메일로 회원 존재시 회원 반환")
-    public void search_user_email_then_return_email() {
+    void search_user_email_then_return_email() {
         // given
         String email = "email@email.com";
 

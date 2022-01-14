@@ -39,7 +39,7 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("회원가입 성공시 SignUpResponse 응답 반환")
-    public void signup_success_then_return_response() throws Exception {
+    void signup_success_then_return_response() throws Exception {
         // given
         String nickName = "nickname";
         String email = "email@email.com";

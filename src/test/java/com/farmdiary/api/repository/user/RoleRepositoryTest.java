@@ -20,7 +20,7 @@ class RoleRepositoryTest {
     private RoleRepository roleRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         Role role = Role.builder()
                 .name(GrantedRole.USER)
                 .build();
@@ -29,13 +29,13 @@ class RoleRepositoryTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         roleRepository.deleteAll();
     }
     
     @Test
     @DisplayName("역할(Role) 명으로 역할 조회시 조회 성공")
-    public void search_role_name_then_searched() {
+    void search_role_name_then_searched() {
         // given
         GrantedRole grantedRole = GrantedRole.USER;
 
