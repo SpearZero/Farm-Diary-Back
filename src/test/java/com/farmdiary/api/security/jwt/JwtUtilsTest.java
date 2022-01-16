@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @ExtendWith({MockitoExtension.class})
 class JwtUtilsTest {
@@ -41,7 +42,7 @@ class JwtUtilsTest {
         ReflectionTestUtils.setField(jwtUtils, "jwtSecret", jwtSecret);
         ReflectionTestUtils.setField(jwtUtils, "jwtExpirationMs", jwtExpiration);
 
-        Mockito.when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(authentication.getPrincipal()).thenReturn(userDetails);
     }
 
     @Test

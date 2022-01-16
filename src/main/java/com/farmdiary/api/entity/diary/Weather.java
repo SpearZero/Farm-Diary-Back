@@ -9,11 +9,11 @@ import java.util.Optional;
 @AllArgsConstructor
 public enum Weather {
 
-    SUNNY("맑음", "00"),
-    CLOUDY("흐림", "01"),
-    RAINY("비", "02"),
-    SNOWY("눈", "03"),
-    ETC("기타", "04");
+    SUNNY("맑음", "W00"),
+    CLOUDY("흐림", "W01"),
+    RAINY("비", "W02"),
+    SNOWY("눈", "W03"),
+    ETC("기타", "W04");
 
     private String viewName;
     private String code;

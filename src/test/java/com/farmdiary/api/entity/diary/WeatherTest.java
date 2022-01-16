@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WeatherTest {
 
     @ParameterizedTest(name = "{index} - input code = {0}")
-    @ValueSource(strings = {"00", "01", "02", "03", "04"})
+    @ValueSource(strings = {"W00", "W01", "W02", "W03", "W04"})
     @DisplayName("코드값이 들어왔을 때 Weather Enum 반환")
     void input_code_then_return_enum_Weather(String code) {
         // when

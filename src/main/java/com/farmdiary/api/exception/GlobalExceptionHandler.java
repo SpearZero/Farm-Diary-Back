@@ -1,10 +1,11 @@
 package com.farmdiary.api.exception;
 
-import com.farmdiary.api.dto.exception.ErrorDetails;
-import com.farmdiary.api.dto.exception.Result;
+import com.farmdiary.api.exception.dto.ErrorDetails;
+import com.farmdiary.api.exception.dto.Result;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,13 +27,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         errors.put("error", exception.getMessage());
 
         Result<Map> message = new Result<Map>(errors);
-        ErrorDetails errorDetails = ErrorDetails.builder()
-                .timestamp(LocalDateTime.now())
-                .message(message)
-                .details(webRequest.getDescription(false))
-                .build();
+        ErrorDetails errorDetails
+                = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorDetails> handleBadCredentialsException(BadCredentialsException exception,
+                                                                      WebRequest webRequest) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", "잘못된 인증 정보입니다.");
+
+        Result<Map> message = new Result<Map>(errors);
+        ErrorDetails errorDetails
+                = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
     @Override
@@ -50,11 +60,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         });
 
         Result<Map> message = new Result<Map>(errors);
-        ErrorDetails errorDetails = ErrorDetails.builder()
-                .timestamp(LocalDateTime.now())
-                .message(message)
-                .details(webRequest.getDescription(false))
-                .build();
+        ErrorDetails errorDetails
+                = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }

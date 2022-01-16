@@ -1,4 +1,4 @@
-package com.farmdiary.api.dto.user;
+package com.farmdiary.api.dto.user.auth;
 
 import com.farmdiary.api.entity.user.User;
 import lombok.AllArgsConstructor;
@@ -28,14 +28,4 @@ public class SignUpRequest {
             message = "소문자,대문자,특수문자(!@#&()–[{}]:;',?/*~$^+=<>),숫자를 포함한 8~15자리를 입력해주세요"
     )
     private String password;
-
-    /*
-    public User toEntity(){
-        return User.builder()
-                .email(email)
-                .nickName(nickName)
-                .password(password)
-                .build();
-    }
-     */
 }

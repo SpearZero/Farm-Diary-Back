@@ -1,4 +1,4 @@
-package com.farmdiary.api.dto.exception;
+package com.farmdiary.api.exception.dto;
 
 import lombok.Builder;
 import lombok.Getter;

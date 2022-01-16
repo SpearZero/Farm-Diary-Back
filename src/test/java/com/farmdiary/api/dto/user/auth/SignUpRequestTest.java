@@ -1,4 +1,4 @@
-package com.farmdiary.api.dto.user;
+package com.farmdiary.api.dto.user.auth;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;

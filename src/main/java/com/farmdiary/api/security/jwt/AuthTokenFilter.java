@@ -1,5 +1,6 @@
 package com.farmdiary.api.security.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,8 +38,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch (ExpiredJwtException e) {
+            log.error("JWT 토큰의 인증시간이 만료되었습니다.");
+            request.setAttribute("authErrorCode", AuthErrorCode.EXPIRED);
         } catch (Exception e) {
-            log.error("유저 인증을 설정할 수 없습니다 : {}", e);
+            log.error("잘못된 인증입니다.");
+            request.setAttribute("authErrorCode", AuthErrorCode.ETC);
         }
 
         filterChain.doFilter(request, response);
