@@ -22,7 +22,7 @@ class RoleRepositoryTest {
     @BeforeEach
     void setUp() {
         Role role = Role.builder()
-                .name(GrantedRole.USER)
+                .name(GrantedRole.ROLE_USER)
                 .build();
 
         roleRepository.save(role);
@@ -37,7 +37,7 @@ class RoleRepositoryTest {
     @DisplayName("역할(Role) 명으로 역할 조회시 조회 성공")
     void search_role_name_then_searched() {
         // given
-        GrantedRole grantedRole = GrantedRole.USER;
+        GrantedRole grantedRole = GrantedRole.ROLE_USER;
 
         // when
         Optional<Role> role = roleRepository.findByName(grantedRole);

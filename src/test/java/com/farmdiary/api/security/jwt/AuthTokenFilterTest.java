@@ -57,7 +57,7 @@ class AuthTokenFilterTest {
 
     private final String email = "email@email.com";
     private final String jwtSecret = "secret";
-    private final int jwtExpirationMs = 864000;
+    private final long jwtExpirationMs = 864000;
 
     @BeforeEach
     void setUp() {

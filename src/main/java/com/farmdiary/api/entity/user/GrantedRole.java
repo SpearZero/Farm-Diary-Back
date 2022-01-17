@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum GrantedRole {
 
-    USER("유저", "00"),
-    ADMIN("관리자", "01");
+    ROLE_USER("유저", "00"),
+    ROLE_ADMIN("관리자", "01");
 
     private String viewName;
     private String code;

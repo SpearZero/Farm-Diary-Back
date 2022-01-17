@@ -25,16 +25,16 @@ public class Diary extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 150, nullable = false)
     private String title;
 
     @Column(columnDefinition = "DATE", nullable = false)
     private LocalDate workDay;
 
-    @Column(length = 200, nullable = false)
+    @Column(length = 210, nullable = false)
     private String field;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 60, nullable = false)
     private String crop;
 
     @Column(nullable = false)

@@ -32,23 +32,7 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
-
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
-
-    @Transactional(readOnly = true)
-    public JwtResponse getAccessToken(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-        return new JwtResponse(jwt, userDetails.getId(), userDetails.getEmail());
-    }
-
+    
     @Transactional
     public SignUpResponse save(SignUpRequest signUpRequest) {
 
@@ -67,7 +51,7 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        Role role = roleRepository.findByName(GrantedRole.USER).orElseThrow(() -> new ResourceNotFoundException("ROLE", "USER"));
+        Role role = roleRepository.findByName(GrantedRole.ROLE_USER).orElseThrow(() -> new ResourceNotFoundException("ROLE", "USER"));
 
         UserRole userRole = UserRole.builder()
                 .user(savedUser)

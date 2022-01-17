@@ -1,14 +1,15 @@
-package com.farmdiary.api.controller.user;
+package com.farmdiary.api.controller;
 
 
+import com.farmdiary.api.controller.AuthController;
 import com.farmdiary.api.dto.user.auth.JwtResponse;
 import com.farmdiary.api.dto.user.auth.LoginRequest;
 import com.farmdiary.api.dto.user.auth.SignUpRequest;
 import com.farmdiary.api.dto.user.auth.SignUpResponse;
-import com.farmdiary.api.entity.user.User;
 import com.farmdiary.api.security.jwt.AuthEntryPointJwt;
 import com.farmdiary.api.security.jwt.JwtUtils;
 import com.farmdiary.api.security.service.UserDetailsServiceImpl;
+import com.farmdiary.api.service.token.TokenService;
 import com.farmdiary.api.service.user.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -19,14 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,6 +37,7 @@ class AuthControllerTest {
     @Autowired private ObjectMapper objectMapper;
 
     @MockBean private AuthService authService;
+    @MockBean private TokenService tokenService;
     @MockBean private UserDetailsServiceImpl userdetailsService;
     @MockBean private JwtUtils jwtUtils;
     @MockBean private AuthEntryPointJwt authEntryPointJwt;
@@ -48,7 +48,7 @@ class AuthControllerTest {
     private final Long userId = 1L;
 
     private final String jwtSecret = "testSecret";
-    private final int jwtExpirationMs = 300000;
+    private final long jwtExpirationMs = 300000;
 
     private final String type = "Bearer";
 
@@ -77,7 +77,7 @@ class AuthControllerTest {
         LoginRequest loginRequest = new LoginRequest(email, password);
         String body = objectMapper.writeValueAsString(loginRequest);
 
-        when(authService.getAccessToken(any(LoginRequest.class))).thenReturn(new JwtResponse(makeJwtToken(), userId, email));
+        when(tokenService.getAccessToken(any(LoginRequest.class))).thenReturn(new JwtResponse(makeJwtToken(), userId, email));
 
         // when, then
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/auth/signin")

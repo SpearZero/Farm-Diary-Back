@@ -1,7 +1,8 @@
-package com.farmdiary.api.controller.user;
+package com.farmdiary.api.controller;
 
 import com.farmdiary.api.dto.user.auth.LoginRequest;
 import com.farmdiary.api.dto.user.auth.SignUpRequest;
+import com.farmdiary.api.service.token.TokenService;
 import com.farmdiary.api.service.user.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,12 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
+    private final TokenService tokenService;
     private final AuthService authService;
 
     @GetMapping("/signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody LoginRequest loginRequest) {
-        return new ResponseEntity<>(authService.getAccessToken(loginRequest), HttpStatus.OK);
+        return new ResponseEntity<>(tokenService.getAccessToken(loginRequest), HttpStatus.OK);
     }
 
     @PostMapping("/signup")

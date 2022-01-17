@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Objects;
 
 @Component
 @Slf4j
@@ -18,15 +19,24 @@ public class JwtUtils {
     private String jwtSecret;
 
     @Value("${farmdiary.api.jwtExpirationMs}")
-    private int jwtExpirationMs;
+    private long jwtExpirationMs;
 
-    public String generateJwtToken(Authentication authentication) {
-        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+    @Value("${farmdiary.api.jwtRefreshExpirationMs}")
+    private long jwtRefreshExpirationMs;
 
+    public String generateAccessToken(UserDetailsImpl userPrincipal) {
+        return generateTokenFromUsername(userPrincipal.getUsername(), jwtExpirationMs);
+    }
+
+    public String generateRefreshToken(UserDetailsImpl userPrincipal) {
+        return generateTokenFromUsername(userPrincipal.getUsername(), jwtRefreshExpirationMs);
+    }
+
+    private String generateTokenFromUsername(String username, long expirationMs) {
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
+                .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .setExpiration(new Date((new Date()).getTime() + expirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }

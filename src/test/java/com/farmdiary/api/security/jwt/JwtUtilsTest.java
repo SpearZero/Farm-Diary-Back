@@ -22,50 +22,62 @@ import static org.mockito.Mockito.*;
 @ExtendWith({MockitoExtension.class})
 class JwtUtilsTest {
 
-    @InjectMocks
-    private JwtUtils jwtUtils;
-
-    @Mock
-    private Authentication authentication;
+    @InjectMocks private JwtUtils jwtUtils;
+    @Mock private Authentication authentication;
 
     private final String email = "email@email.com";
     private final String jwtSecret = "secret";
     private final String invalidJwtSecret = "failSecret";
-    private final int jwtExpiration = 864000;
-    private final int jwtExpiredExpiration = 0;
+    private final long jwtExpiration = 864000;
+    private final long jwtExpiredExpiration = 0;
+    private final long jwtRefreshExpiration = 8640000;
+    private final long jwtRefreshExpiredExpiration = 0;
 
     private UserDetailsImpl userDetails;
-    
-    private void setJwtTokenInfo(String jwtSecret, int jwtExpiration) {
+
+    private void setJwtTokenInfo(String jwtSecret, long jwtExpiration, long jwtRefreshExpiration) {
         User user = User.builder().email(email).build();
-        UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+        userDetails = UserDetailsImpl.build(user);
+
         ReflectionTestUtils.setField(jwtUtils, "jwtSecret", jwtSecret);
         ReflectionTestUtils.setField(jwtUtils, "jwtExpirationMs", jwtExpiration);
-
-        when(authentication.getPrincipal()).thenReturn(userDetails);
+        ReflectionTestUtils.setField(jwtUtils, "jwtRefreshExpirationMs", jwtRefreshExpiration);
     }
 
     @Test
-    @DisplayName("인증된 유저정보가 전달되면 JWT 토큰 생성")
-    void pass_verified_userdetails_then_create_jwttoken() {
+    @DisplayName("인증된 유저정보가 전달되면 accessToken 토큰 생성")
+    void pass_verified_userdetails_then_create_accessToken() {
         // given
-        setJwtTokenInfo(jwtSecret, jwtExpiration);
+        setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
 
         // when
-        String jwtToken = jwtUtils.generateJwtToken(authentication);
+        String jwtToken = jwtUtils.generateAccessToken(userDetails);
 
         // then
         assertThat(jwtToken).isNotNull();
     }
 
     @Test
-    @DisplayName("JWT 토큰으로부터 이메일 추출")
-    void pass_token_then_return_email() {
+    @DisplayName("인증된 유저정보가 전달되면 refreshToken 토큰 생성")
+    void pass_verified_userdetails_then_create_refreshToken() {
         // given
-        setJwtTokenInfo(jwtSecret, jwtExpiration);
+        setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
 
         // when
-        String jwtToken = jwtUtils.generateJwtToken(authentication);
+        String jwtToken = jwtUtils.generateRefreshToken(userDetails);
+
+        // then
+        assertThat(jwtToken).isNotNull();
+    }
+
+    @Test
+    @DisplayName("accessToken으로부터 이메일 추출")
+    void pass_accessToken_then_extract_email() {
+        // given
+        setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
+
+        // when
+        String jwtToken = jwtUtils.generateAccessToken(userDetails);
         String userName = jwtUtils.getUserNameFromJwtToken(jwtToken);
 
         // then
@@ -73,11 +85,11 @@ class JwtUtilsTest {
     }
 
     @Test
-    @DisplayName("정상적인 JWT 토큰이 전달될 경우 true 반환")
-    void token_verify_success_then_return_true() {
+    @DisplayName("정상적인 accessToken 토큰이 전달될 경우 true 반환")
+    void accessToken_verify_success_then_return_true() {
         // given
-        setJwtTokenInfo(jwtSecret, jwtExpiration);
-        String jwtToken = jwtUtils.generateJwtToken(authentication);
+        setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
+        String jwtToken = jwtUtils.generateAccessToken(userDetails);
 
         // when
         boolean result = jwtUtils.validateJwtToken(jwtToken);
@@ -87,11 +99,37 @@ class JwtUtilsTest {
     }
 
     @Test
-    @DisplayName("JWT의 시그니처 검증이 실패할 경우 SignatureException 반환")
-    void signature_verify_fail_then_throw_SignatureException() {
+    @DisplayName("정상적인 refreshToken 토큰이 전달될 경우 true 반환")
+    void refreshToken_verify_success_then_return_true() {
         // given
-        setJwtTokenInfo(jwtSecret, jwtExpiration);
-        String jwtToken = jwtUtils.generateJwtToken(authentication);
+        setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
+        String refreshToken = jwtUtils.generateRefreshToken(userDetails);
+
+        // when
+        boolean result = jwtUtils.validateJwtToken(refreshToken);
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("accessToken의 시그니처 검증이 실패할 경우 SignatureException 반환")
+    void accessToken_signature_verify_fail_then_throw_SignatureException() {
+        // given
+        setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
+        String jwtToken = jwtUtils.generateAccessToken(userDetails);
+        ReflectionTestUtils.setField(jwtUtils, "jwtSecret", invalidJwtSecret);
+
+        // when, then
+        Assertions.assertThrows(SignatureException.class, () -> jwtUtils.validateJwtToken(jwtToken));
+    }
+
+    @Test
+    @DisplayName("refreshToken의 시그니처 검증이 실패할 경우 SignatureException 반환")
+    void refreshToken_signature_verify_fail_then_throw_SignatureException() {
+        // given
+        setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
+        String jwtToken = jwtUtils.generateRefreshToken(userDetails);
         ReflectionTestUtils.setField(jwtUtils, "jwtSecret", invalidJwtSecret);
 
         // when, then
@@ -99,29 +137,51 @@ class JwtUtilsTest {
     }
     
     @Test
-    @DisplayName("JWT의 구조적인 문제가 있는경우 MalformedJwtException 반환")
-    void formed_verify_fail_then_throw_MalformedJwtException() {
+    @DisplayName("accessToken의 구조적인 문제가 있는경우 MalformedJwtException 반환")
+    void accessToken_formed_verify_fail_then_throw_MalformedJwtException() {
         // given
-        setJwtTokenInfo(jwtSecret, jwtExpiration);
-        String jwtToken = "Bearer " + jwtUtils.generateJwtToken(authentication);
+        setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
+        String jwtToken = "Bearer " + jwtUtils.generateAccessToken(userDetails);
 
         // when, then
         Assertions.assertThrows(MalformedJwtException.class, () -> jwtUtils.validateJwtToken(jwtToken));
     }
+
+    @Test
+    @DisplayName("refreshToken의 구조적인 문제가 있는경우 MalformedJwtException 반환")
+    void refreshToken_formed_verify_fail_then_throw_MalformedJwtException() {
+        // given
+        setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
+        String refreshToken = "Bearer " + jwtUtils.generateRefreshToken(userDetails);
+
+        // when, then
+        Assertions.assertThrows(MalformedJwtException.class, () -> jwtUtils.validateJwtToken(refreshToken));
+    }
     
     @Test
-    @DisplayName("JWT의 유효기간이 만료된 경우 ExpiredJwtException 반환")
-    void jwt_expired_then_throw_ExpiredJwtException() {
+    @DisplayName("accessToken의 유효기간이 만료된 경우 ExpiredJwtException 반환")
+    void accessToken_expired_then_throw_ExpiredJwtException() {
         // given
-        setJwtTokenInfo(jwtSecret, jwtExpiredExpiration);
-        String jwtToken = jwtUtils.generateJwtToken(authentication);
+        setJwtTokenInfo(jwtSecret, jwtExpiredExpiration, jwtRefreshExpiration);
+        String jwtToken = jwtUtils.generateAccessToken(userDetails);
 
         // when, then
         Assertions.assertThrows(ExpiredJwtException.class, () -> jwtUtils.validateJwtToken(jwtToken));
     }
 
     @Test
-    @DisplayName("JWT값으로 공백이 전달될 경우 IllegalArgumentException 반환")
+    @DisplayName("refreshToken의 유효기간이 만료된 경우 ExpiredJwtException 반환")
+    void refreshToken_expired_then_throw_ExpiredJwtException() {
+        // given
+        setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiredExpiration);
+        String refreshToken = jwtUtils.generateRefreshToken(userDetails);
+
+        // when, then
+        Assertions.assertThrows(ExpiredJwtException.class, () -> jwtUtils.validateJwtToken(refreshToken));
+    }
+
+    @Test
+    @DisplayName("token 값으로 공백이 전달될 경우 IllegalArgumentException 반환")
     void blank_verity_fail_then_throw_IllegalArgumentException() {
         // given
         String token = "";
