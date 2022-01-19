@@ -1,9 +1,7 @@
 package com.farmdiary.api.service.user;
 
-import com.farmdiary.api.dto.user.auth.JwtResponse;
-import com.farmdiary.api.dto.user.auth.LoginRequest;
-import com.farmdiary.api.dto.user.auth.SignUpRequest;
-import com.farmdiary.api.dto.user.auth.SignUpResponse;
+import com.farmdiary.api.dto.user.SignUpRequest;
+import com.farmdiary.api.dto.user.SignUpResponse;
 import com.farmdiary.api.entity.user.GrantedRole;
 import com.farmdiary.api.entity.user.Role;
 import com.farmdiary.api.entity.user.User;
@@ -13,13 +11,7 @@ import com.farmdiary.api.exception.ResourceNotFoundException;
 import com.farmdiary.api.repository.user.RoleRepository;
 import com.farmdiary.api.repository.user.UserRepository;
 import com.farmdiary.api.repository.user.UserRoleRepository;
-import com.farmdiary.api.security.jwt.JwtUtils;
-import com.farmdiary.api.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

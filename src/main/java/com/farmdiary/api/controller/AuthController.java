@@ -1,7 +1,8 @@
 package com.farmdiary.api.controller;
 
-import com.farmdiary.api.dto.user.auth.LoginRequest;
-import com.farmdiary.api.dto.user.auth.SignUpRequest;
+import com.farmdiary.api.dto.token.LoginRequest;
+import com.farmdiary.api.dto.token.RefreshTokenRequest;
+import com.farmdiary.api.dto.user.SignUpRequest;
 import com.farmdiary.api.service.token.TokenService;
 import com.farmdiary.api.service.user.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,16 @@ public class AuthController {
 
     @GetMapping("/signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody LoginRequest loginRequest) {
-        return new ResponseEntity<>(tokenService.getAccessToken(loginRequest), HttpStatus.OK);
+        return new ResponseEntity<>(tokenService.getToken(loginRequest), HttpStatus.OK);
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         return new ResponseEntity<>(authService.save(signUpRequest), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/accessToken")
+    public ResponseEntity<?> getAccessToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return new ResponseEntity<>(tokenService.getNewAccessToken(refreshTokenRequest), HttpStatus.CREATED);
     }
 }

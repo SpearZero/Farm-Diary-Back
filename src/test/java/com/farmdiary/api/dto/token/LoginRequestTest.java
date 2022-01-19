@@ -1,6 +1,5 @@
-package com.farmdiary.api.dto.user.auth;
+package com.farmdiary.api.dto.token;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 
+@DisplayName("LoginRequest 테스트")
 class LoginRequestTest {
 
     private static Validator validator;
@@ -57,8 +57,8 @@ class LoginRequestTest {
     }
     
     @Test
-    @DisplayName("정상적인 이메일과 패스워드가 전달되면 검증 성공")
-    void loginRequest_email_password_normal_then_loginRequest_email_password_success() {
+    @DisplayName("공백없는 이메일과 패스워드가 전달되면 검증 성공")
+    void loginRequest_email_password_not_blank_then_loginRequest_email_password_success() {
         // given
         String email = "email";
         String password = "password";

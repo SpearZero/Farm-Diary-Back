@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
+@DisplayName("Diary 테스트")
 class DiaryTest {
 
     // 영농일지 필드 값

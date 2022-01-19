@@ -1,4 +1,4 @@
-package com.farmdiary.api.dto.user.auth;
+package com.farmdiary.api.dto.user;
 
 import com.farmdiary.api.entity.user.User;
 import lombok.AllArgsConstructor;

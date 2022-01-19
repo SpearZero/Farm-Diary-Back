@@ -1,7 +1,7 @@
 package com.farmdiary.api.service.user;
 
-import com.farmdiary.api.dto.user.auth.SignUpRequest;
-import com.farmdiary.api.dto.user.auth.SignUpResponse;
+import com.farmdiary.api.dto.user.SignUpRequest;
+import com.farmdiary.api.dto.user.SignUpResponse;
 import com.farmdiary.api.entity.user.GrantedRole;
 import com.farmdiary.api.entity.user.Role;
 import com.farmdiary.api.entity.user.User;
@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-
+@DisplayName("AuthService 테스트")
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 

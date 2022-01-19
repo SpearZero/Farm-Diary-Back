@@ -36,17 +36,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AuthTokenFilterTest {
 
-    @InjectMocks
-    private AuthTokenFilter authTokenFilter;
-
-    @Mock
-    private JwtUtils jwtUtils;
-
-    @Mock
-    private UserDetailsService userDetailsService;
-
-    @Mock
-    private Authentication authentication;
+    @InjectMocks private AuthTokenFilter authTokenFilter;
+    @Mock private JwtUtils jwtUtils;
+    @Mock private UserDetailsService userDetailsService;
+    @Mock private Authentication authentication;
 
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
@@ -54,7 +47,6 @@ class AuthTokenFilterTest {
     private AuthTokenFilter jwtFilter;
 
     private final String authorizationHeader = "Authorization";
-
     private final String email = "email@email.com";
     private final String jwtSecret = "secret";
     private final long jwtExpirationMs = 864000;

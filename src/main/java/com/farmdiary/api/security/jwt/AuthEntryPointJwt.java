@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -25,14 +24,12 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
-        AuthErrorCode errorCode = Optional.ofNullable((AuthErrorCode)request.getAttribute("authErrorCode"))
-                .orElseGet(() -> AuthErrorCode.ETC);
 
         Map<String, String> errors = new HashMap<>();
-        errors.put("error", errorCode.getMessage());
+        errors.put("error", "인증에 실패했습니다.");
 
         Result<Map> message = new Result<Map>(errors);
-        ErrorDetails errorDetails = ErrorDetails.getErrorDetails(message, "errorCode : " + errorCode.getCode());
+        ErrorDetails errorDetails = ErrorDetails.getErrorDetails(message, request.getRequestURI());
 
         String errorResponse = objectMapper.writeValueAsString(errorDetails);
 

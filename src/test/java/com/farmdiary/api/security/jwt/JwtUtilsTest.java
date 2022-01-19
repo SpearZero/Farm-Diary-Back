@@ -19,6 +19,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+@DisplayName("JwtUtils 테스트")
 @ExtendWith({MockitoExtension.class})
 class JwtUtilsTest {
 
@@ -32,6 +33,7 @@ class JwtUtilsTest {
     private final long jwtExpiredExpiration = 0;
     private final long jwtRefreshExpiration = 8640000;
     private final long jwtRefreshExpiredExpiration = 0;
+    private TokenType accessTokenType = TokenType.ACCESS_TOKEN;
 
     private UserDetailsImpl userDetails;
 
@@ -51,7 +53,7 @@ class JwtUtilsTest {
         setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
 
         // when
-        String jwtToken = jwtUtils.generateAccessToken(userDetails);
+        String jwtToken = jwtUtils.generateAccessToken(userDetails.getUsername());
 
         // then
         assertThat(jwtToken).isNotNull();
@@ -64,7 +66,7 @@ class JwtUtilsTest {
         setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
 
         // when
-        String jwtToken = jwtUtils.generateRefreshToken(userDetails);
+        String jwtToken = jwtUtils.generateRefreshToken(email);
 
         // then
         assertThat(jwtToken).isNotNull();
@@ -77,7 +79,7 @@ class JwtUtilsTest {
         setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
 
         // when
-        String jwtToken = jwtUtils.generateAccessToken(userDetails);
+        String jwtToken = jwtUtils.generateAccessToken(userDetails.getUsername());
         String userName = jwtUtils.getUserNameFromJwtToken(jwtToken);
 
         // then
@@ -89,7 +91,7 @@ class JwtUtilsTest {
     void accessToken_verify_success_then_return_true() {
         // given
         setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
-        String jwtToken = jwtUtils.generateAccessToken(userDetails);
+        String jwtToken = jwtUtils.generateAccessToken(userDetails.getUsername());
 
         // when
         boolean result = jwtUtils.validateJwtToken(jwtToken);
@@ -103,7 +105,7 @@ class JwtUtilsTest {
     void refreshToken_verify_success_then_return_true() {
         // given
         setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
-        String refreshToken = jwtUtils.generateRefreshToken(userDetails);
+        String refreshToken = jwtUtils.generateRefreshToken(email);
 
         // when
         boolean result = jwtUtils.validateJwtToken(refreshToken);
@@ -117,7 +119,7 @@ class JwtUtilsTest {
     void accessToken_signature_verify_fail_then_throw_SignatureException() {
         // given
         setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
-        String jwtToken = jwtUtils.generateAccessToken(userDetails);
+        String jwtToken = jwtUtils.generateAccessToken(userDetails.getUsername());
         ReflectionTestUtils.setField(jwtUtils, "jwtSecret", invalidJwtSecret);
 
         // when, then
@@ -129,7 +131,7 @@ class JwtUtilsTest {
     void refreshToken_signature_verify_fail_then_throw_SignatureException() {
         // given
         setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
-        String jwtToken = jwtUtils.generateRefreshToken(userDetails);
+        String jwtToken = jwtUtils.generateRefreshToken(email);
         ReflectionTestUtils.setField(jwtUtils, "jwtSecret", invalidJwtSecret);
 
         // when, then
@@ -141,7 +143,7 @@ class JwtUtilsTest {
     void accessToken_formed_verify_fail_then_throw_MalformedJwtException() {
         // given
         setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
-        String jwtToken = "Bearer " + jwtUtils.generateAccessToken(userDetails);
+        String jwtToken = "Bearer " + jwtUtils.generateAccessToken(userDetails.getUsername());
 
         // when, then
         Assertions.assertThrows(MalformedJwtException.class, () -> jwtUtils.validateJwtToken(jwtToken));
@@ -152,7 +154,7 @@ class JwtUtilsTest {
     void refreshToken_formed_verify_fail_then_throw_MalformedJwtException() {
         // given
         setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiration);
-        String refreshToken = "Bearer " + jwtUtils.generateRefreshToken(userDetails);
+        String refreshToken = "Bearer " + jwtUtils.generateRefreshToken(email);
 
         // when, then
         Assertions.assertThrows(MalformedJwtException.class, () -> jwtUtils.validateJwtToken(refreshToken));
@@ -163,7 +165,7 @@ class JwtUtilsTest {
     void accessToken_expired_then_throw_ExpiredJwtException() {
         // given
         setJwtTokenInfo(jwtSecret, jwtExpiredExpiration, jwtRefreshExpiration);
-        String jwtToken = jwtUtils.generateAccessToken(userDetails);
+        String jwtToken = jwtUtils.generateAccessToken(userDetails.getUsername());
 
         // when, then
         Assertions.assertThrows(ExpiredJwtException.class, () -> jwtUtils.validateJwtToken(jwtToken));
@@ -174,7 +176,7 @@ class JwtUtilsTest {
     void refreshToken_expired_then_throw_ExpiredJwtException() {
         // given
         setJwtTokenInfo(jwtSecret, jwtExpiration, jwtRefreshExpiredExpiration);
-        String refreshToken = jwtUtils.generateRefreshToken(userDetails);
+        String refreshToken = jwtUtils.generateRefreshToken(email);
 
         // when, then
         Assertions.assertThrows(ExpiredJwtException.class, () -> jwtUtils.validateJwtToken(refreshToken));

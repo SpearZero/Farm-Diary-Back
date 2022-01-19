@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@DisplayName("UserDetailsServiceImpl 테스트")
 @ExtendWith(MockitoExtension.class)
 class UserDetailsServiceImplTest {
 

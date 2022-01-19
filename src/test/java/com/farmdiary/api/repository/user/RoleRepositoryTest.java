@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
+@DisplayName("RoleRepository 테스트")
 @DataJpaTest
 class RoleRepositoryTest {
 
@@ -43,6 +44,6 @@ class RoleRepositoryTest {
         Optional<Role> role = roleRepository.findByName(grantedRole);
 
         // then
-        assertThat(role).isNotEmpty();
+        assertThat(role.get()).isNotNull();
     }
 }

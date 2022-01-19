@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@DisplayName("Weather 테스트")
 class WeatherTest {
 
     @ParameterizedTest(name = "{index} - input code = {0}")

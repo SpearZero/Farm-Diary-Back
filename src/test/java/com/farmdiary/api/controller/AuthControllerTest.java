@@ -1,11 +1,12 @@
 package com.farmdiary.api.controller;
 
 
-import com.farmdiary.api.controller.AuthController;
-import com.farmdiary.api.dto.user.auth.JwtResponse;
-import com.farmdiary.api.dto.user.auth.LoginRequest;
-import com.farmdiary.api.dto.user.auth.SignUpRequest;
-import com.farmdiary.api.dto.user.auth.SignUpResponse;
+import com.farmdiary.api.dto.token.JwtResponse;
+import com.farmdiary.api.dto.token.LoginRequest;
+import com.farmdiary.api.dto.token.RefreshTokenRequest;
+import com.farmdiary.api.dto.token.RefreshTokenResponse;
+import com.farmdiary.api.dto.user.SignUpRequest;
+import com.farmdiary.api.dto.user.SignUpResponse;
 import com.farmdiary.api.security.jwt.AuthEntryPointJwt;
 import com.farmdiary.api.security.jwt.JwtUtils;
 import com.farmdiary.api.security.service.UserDetailsServiceImpl;
@@ -49,11 +50,12 @@ class AuthControllerTest {
 
     private final String jwtSecret = "testSecret";
     private final long jwtExpirationMs = 300000;
+    private final long jwtRefreshExpirationMs = 3000000;
 
     private final String type = "Bearer";
 
     @Test
-    @DisplayName("회원가입 성공시 SignUpResponse 응답 반환")
+    @DisplayName("회원가입 성공시 회원가입 성공 응답 반환")
     void signup_success_then_return_response() throws Exception {
         // given
         SignUpRequest request = new SignUpRequest(nickname, email, password);
@@ -71,13 +73,14 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("로그인 성공시 JwtResponse 응답 반환")
+    @DisplayName("로그인 성공시 토큰 응답 반환")
     void login_success_then_return_response() throws Exception {
         // given
         LoginRequest loginRequest = new LoginRequest(email, password);
         String body = objectMapper.writeValueAsString(loginRequest);
 
-        when(tokenService.getAccessToken(any(LoginRequest.class))).thenReturn(new JwtResponse(makeJwtToken(), userId, email));
+        when(tokenService.getToken(any(LoginRequest.class))).thenReturn(
+                new JwtResponse(makeJwtToken(jwtExpirationMs), makeJwtToken(jwtRefreshExpirationMs), userId, email));
 
         // when, then
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/auth/signin")
@@ -85,19 +88,44 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.accessToken").isNotEmpty())
+            .andExpect(jsonPath("$.accesstoken").isNotEmpty())
+            .andExpect(jsonPath("$.refreshtoken").isNotEmpty())
             .andExpect(jsonPath("$.type").value(type))
             .andExpect(jsonPath("$.id").value(userId))
             .andExpect(jsonPath("$.email").value(email));
     }
 
-    private String makeJwtToken() {
+    private String makeJwtToken(long expirationMs) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .setExpiration(new Date((new Date()).getTime() + expirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
+    
+    @Test
+    @DisplayName("리프레시토큰 전달시 새로운 액세스토큰 반환")
+    void refreshtoken_success_then_return_accesstoken() throws Exception {
+        // given
+        String generatedRefreshToken = makeJwtToken(jwtRefreshExpirationMs);
+        String newAccessToken = makeJwtToken(jwtExpirationMs);
+        RefreshTokenRequest request = new RefreshTokenRequest(generatedRefreshToken);
+        String body = objectMapper.writeValueAsString(request);
 
+
+        when(tokenService.getNewAccessToken(any(RefreshTokenRequest.class))).thenReturn(
+                new RefreshTokenResponse(newAccessToken, generatedRefreshToken));
+
+        // when, then
+        mvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/accessToken")
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.refreshToken").isNotEmpty())
+                .andExpect(jsonPath("$.type").value(type));
+
+    }
 }

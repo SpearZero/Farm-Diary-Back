@@ -1,4 +1,4 @@
-package com.farmdiary.api.dto.user.auth;
+package com.farmdiary.api.dto.user;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
+@DisplayName("SignUpRequest 테스트")
 class SignUpRequestTest {
 
     private static Validator validator;

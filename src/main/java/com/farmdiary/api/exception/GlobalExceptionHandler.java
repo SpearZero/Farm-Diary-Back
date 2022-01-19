@@ -33,6 +33,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RefreshTokenException.class)
+    public ResponseEntity<ErrorDetails> handleRefreshTokenException(RefreshTokenException exception,
+                                                                    WebRequest webRequest) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", exception.getMessage());
+
+        Result<Map> message = new Result<Map>(errors);
+        ErrorDetails errorDetails
+                = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorDetails> handleBadCredentialsException(BadCredentialsException exception,
                                                                       WebRequest webRequest) {
