@@ -5,6 +5,7 @@ import com.farmdiary.api.exception.dto.Result;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -57,6 +58,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
 
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", "필드 값의 형식이 잘못 되었습니다.");
+
+        System.out.println(ex.getCause());
+
+        Result<Map> message = new Result<Map>(errors);
+        ErrorDetails errorDetails
+                = ErrorDetails.getErrorDetails(message, request.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
     @Override

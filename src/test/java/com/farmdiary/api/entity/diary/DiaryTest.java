@@ -337,17 +337,7 @@ class DiaryTest {
     }
 
     @Test
-    @DisplayName("유저가 인증되지 않으면 연관관계 설정이 되지 않음")
-    void user_not_verified_then_user_not_set() {
-        // when
-        diary.setUser(user);
-
-        // then
-        assertThat(diary.getUser()).isNull();
-    }
-
-    @Test
-    @DisplayName("유저가 null이 아니고 인증되면 연관관계 설정")
+    @DisplayName("유저가 null이 아니면 연관관계 설정")
     void user_verified_and_not_null_user_set() {
         // given
         user.verifyEmail();

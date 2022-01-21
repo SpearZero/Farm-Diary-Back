@@ -1,13 +1,14 @@
 package com.farmdiary.api.entity.diary;
 
+import com.farmdiary.api.entity.BaseEnum;
+import com.farmdiary.api.exception.DiaryApiException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Optional;
 
-@Getter
 @AllArgsConstructor
-public enum Weather {
+public enum Weather implements BaseEnum {
 
     SUNNY("맑음", "W00"),
     CLOUDY("흐림", "W01"),
@@ -27,6 +28,15 @@ public enum Weather {
             }
         }
 
-        throw new IllegalArgumentException("코드값에 대한 날씨가 존재하지 않습니다.");
+        throw new DiaryApiException("코드값에 대한 날씨가 존재하지 않습니다.");
+    }
+
+    public String getViewName() {
+        return viewName;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
     }
 }

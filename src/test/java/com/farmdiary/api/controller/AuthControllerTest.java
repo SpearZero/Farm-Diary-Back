@@ -88,8 +88,8 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.accesstoken").isNotEmpty())
-            .andExpect(jsonPath("$.refreshtoken").isNotEmpty())
+            .andExpect(jsonPath("$.access_token").isNotEmpty())
+            .andExpect(jsonPath("$.refresh_token").isNotEmpty())
             .andExpect(jsonPath("$.type").value(type))
             .andExpect(jsonPath("$.id").value(userId))
             .andExpect(jsonPath("$.email").value(email));
@@ -123,9 +123,8 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.refreshToken").isNotEmpty())
-                .andExpect(jsonPath("$.type").value(type));
-
+            .andExpect(jsonPath("$.access_token").isNotEmpty())
+            .andExpect(jsonPath("$.refresh_token").isNotEmpty())
+            .andExpect(jsonPath("$.type").value(type));
     }
 }

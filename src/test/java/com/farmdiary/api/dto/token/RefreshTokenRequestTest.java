@@ -1,12 +1,11 @@
 package com.farmdiary.api.dto.token;
 
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -14,6 +13,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -28,9 +28,13 @@ class RefreshTokenRequestTest {
         validator = factory.getValidator();
     }
 
+    static Stream<String> invalidRefreshToken() {
+        return Stream.of(null, "", " ", "  ");
+    }
+
     @ParameterizedTest(name = "{index} - input refreshToken = {0}(blank)")
-    @ValueSource(strings = {"", " ", "  "})
-    @DisplayName("리프레시토큰에 공백이 전달되면 검증 실패")
+    @MethodSource("invalidRefreshToken")
+    @DisplayName("리프레시토큰에 공백또는 null이 전달되면 검증 실패")
     void refreshTokenRequest_token_blank_then_refreshTokenRequest_fail(String refreshToken) {
         // given
         RefreshTokenRequest request = new RefreshTokenRequest(refreshToken);

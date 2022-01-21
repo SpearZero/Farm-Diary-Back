@@ -93,8 +93,8 @@ class TokenServiceTest {
 
         // then
         assertThat(jwtResponse).isNotNull();
-        assertThat(jwtResponse.getAccesstoken()).isEqualTo(jwtToken);
-        assertThat(jwtResponse.getRefreshtoken()).isEqualTo(generatedRefreshToken);
+        assertThat(jwtResponse.getAccess_token()).isEqualTo(jwtToken);
+        assertThat(jwtResponse.getRefresh_token()).isEqualTo(generatedRefreshToken);
         assertThat(jwtResponse.getId()).isEqualTo(userId);
         assertThat(jwtResponse.getEmail()).isEqualTo(email);
     }
@@ -103,8 +103,7 @@ class TokenServiceTest {
     @DisplayName("리프레시토큰 값으로 리프레시 토큰 엔티티 조회시 조회 성공")
     void serach_refreshToken_then_searched() {
         // given
-        User user = User.builder()
-                .email(email).build();
+        User user = User.builder().email(email).build();
         ReflectionTestUtils.setField(user, "id", userId);
 
         String generatedRefreshToken = makeJwtToken(jwtRefreshExpirationMs);
@@ -161,8 +160,8 @@ class TokenServiceTest {
         // given
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefreshtoken()))
-                .thenThrow(new ResourceNotFoundException("리프레시토큰", refreshTokenRequest.getRefreshtoken()));
+        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefresh_token()))
+                .thenThrow(new ResourceNotFoundException("리프레시토큰", refreshTokenRequest.getRefresh_token()));
 
         // when, then
         Assertions.assertThrows(ResourceNotFoundException.class,
@@ -183,7 +182,7 @@ class TokenServiceTest {
 
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefreshtoken()))
+        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefresh_token()))
                 .thenReturn(Optional.of(refreshToken));
         when(jwtUtils.validateJwtToken(generatedRefreshToken)).thenThrow(new ExpiredJwtException(null, null, null));
 
@@ -205,7 +204,7 @@ class TokenServiceTest {
 
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefreshtoken()))
+        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefresh_token()))
                 .thenReturn(Optional.of(refreshToken));
         when(jwtUtils.validateJwtToken(generatedRefreshToken)).thenThrow(new IllegalArgumentException());
 
@@ -228,7 +227,7 @@ class TokenServiceTest {
 
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefreshtoken()))
+        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefresh_token()))
                 .thenReturn(Optional.of(refreshToken));
         when(jwtUtils.generateAccessToken(email)).thenReturn(newAccessToken);
 
@@ -237,7 +236,7 @@ class TokenServiceTest {
 
         // then
         assertThat(refreshTokenResponse).isNotNull();
-        assertThat(refreshTokenResponse.getAccessToken()).isEqualTo(newAccessToken);
-        assertThat(refreshTokenResponse.getRefreshToken()).isEqualTo(existsRefreshToken);
+        assertThat(refreshTokenResponse.getAccess_token()).isEqualTo(newAccessToken);
+        assertThat(refreshTokenResponse.getRefresh_token()).isEqualTo(existsRefreshToken);
     }
 }

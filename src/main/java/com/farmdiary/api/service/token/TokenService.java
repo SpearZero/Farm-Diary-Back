@@ -63,7 +63,7 @@ public class TokenService {
 
     @Transactional(readOnly = true)
     public RefreshTokenResponse getNewAccessToken(RefreshTokenRequest refreshTokenRequest) {
-        String requestRefreshToken = refreshTokenRequest.getRefreshtoken();
+        String requestRefreshToken = refreshTokenRequest.getRefresh_token();
 
         RefreshToken refreshToken = refreshTokenRepository.findByToken(requestRefreshToken)
                 .orElseThrow(() -> new ResourceNotFoundException("리프레시토큰", requestRefreshToken));

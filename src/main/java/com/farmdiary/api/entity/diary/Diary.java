@@ -64,7 +64,7 @@ public class Diary extends BaseTimeEntity {
     }
 
     public void setUser(User user) {
-        if (null != user && user.isEmailVerified()) {
+        if (null != user) {
             user.getDiaries().add(this);
             this.user = user;
         }
