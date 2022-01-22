@@ -25,25 +25,25 @@ import static org.assertj.core.api.Assertions.*;
 class DiaryRepositoryTest {
 
     // User 관련 repository
-    @Autowired private UserRepository userRepository;
-    @Autowired private RoleRepository roleRepository;
-    @Autowired private UserRoleRepository userRoleRepository;
+    @Autowired UserRepository userRepository;
+    @Autowired RoleRepository roleRepository;
+    @Autowired UserRoleRepository userRoleRepository;
 
-    private final String nickname = "nickname";
-    private final String email = "email@email.com";
-    private final String password = "password";
+    final String nickname = "nickname";
+    final String email = "email@email.com";
+    final String password = "password";
 
     // Diary 관련 repository
-    @Autowired private DiaryRepository diaryRepository;
+    @Autowired DiaryRepository diaryRepository;
 
-    private final String title = "title";
-    private final LocalDate workDay = LocalDate.of(2022, 1, 20);
-    private final String field = "field";
-    private final String crop = "crop";
-    private final Double temperature = 0.0;
-    private final Weather weather = Weather.SUNNY;
-    private final Integer precipitation = 100;
-    private final String workDetail = "workDetail";
+    final String title = "title";
+    final LocalDate workDay = LocalDate.of(2022, 1, 20);
+    final String field = "field";
+    final String crop = "crop";
+    final Double temperature = 0.0;
+    final Weather weather = Weather.SUNNY;
+    final Integer precipitation = 100;
+    final String workDetail = "workDetail";
 
     @BeforeEach
     void setUp() {
@@ -66,7 +66,7 @@ class DiaryRepositoryTest {
     }
 
     @Test
-    @DisplayName("영농일지 조회시 회원도 함께 조회된다.")
+    @DisplayName("영농일지 조회시 회원도 함께 조회 성공")
     void search_diary_then_searched_with_user() {
         // given
         Long diaryId = 1l;

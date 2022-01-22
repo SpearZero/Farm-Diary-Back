@@ -36,7 +36,8 @@ public class AuthService {
             throw new DiaryApiException("이미 존재하는 이메일(email) 입니다.");
         }
 
-        User user = User.builder().nickName(signUpRequest.getNickname())
+        User user = User.builder()
+                .nickName(signUpRequest.getNickname())
                 .email(signUpRequest.getEmail())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .build();

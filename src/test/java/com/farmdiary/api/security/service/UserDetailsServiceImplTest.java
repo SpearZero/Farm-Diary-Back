@@ -22,8 +22,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserDetailsServiceImplTest {
 
-    @InjectMocks private UserDetailsServiceImpl userDetailsService;
-    @Mock private UserRepository userRepository;
+    @InjectMocks UserDetailsServiceImpl userDetailsService;
+    @Mock UserRepository userRepository;
 
     @Test
     @DisplayName("존재하지 않는 이메일로 조회시 UsernameNotFoundException 반환")

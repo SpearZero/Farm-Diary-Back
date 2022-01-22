@@ -14,22 +14,22 @@ import static org.assertj.core.api.Assertions.*;
 class DiaryTest {
 
     // 영농일지 필드 값
-    private final String title = "title";
-    private final LocalDate workDay = LocalDate.of(2022, 01, 05);
-    private final String field = "field";
-    private final String crop = "crop";
-    private final Double temperature = 0.0;
-    private final Weather weather = Weather.SUNNY;
-    private final Integer precipitation = 0;
-    private final String workDetail = "workDetail";
+    final String title = "title";
+    final LocalDate workDay = LocalDate.of(2022, 01, 05);
+    final String field = "field";
+    final String crop = "crop";
+    final Double temperature = 0.0;
+    final Weather weather = Weather.SUNNY;
+    final Integer precipitation = 0;
+    final String workDetail = "workDetail";
     
     // 유저 필드 값
-    private final String nickName = "nickName";
-    private final String email = "email@email.com";
-    private final String password = "passwordD123!";
+    final String nickName = "nickName";
+    final String email = "email@email.com";
+    final String password = "passwordD123!";
 
-    private Diary diary;
-    private User user;
+    Diary diary;
+    User user;
 
     @BeforeEach
     void setUpDiary() {

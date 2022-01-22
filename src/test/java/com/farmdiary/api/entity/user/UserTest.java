@@ -10,9 +10,9 @@ import static org.assertj.core.api.Assertions.*;
 class UserTest {
     
     // 유저 필드 값
-    private final String nickName = "nickName";
-    private final String email = "email@email.com";
-    private final String password = "password";
+    final String nickName = "nickName";
+    final String email = "email@email.com";
+    final String password = "password";
 
     private User user;
 

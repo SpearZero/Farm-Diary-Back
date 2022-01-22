@@ -19,12 +19,11 @@ import static org.assertj.core.api.Assertions.*;
 @DataJpaTest
 class UserRepositoryTest {
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired UserRepository userRepository;
 
-    private final String nickname = "nickname";
-    private final String email = "email@email.com";
-    private final String password = "password";
+    final String nickname = "nickname";
+    final String email = "email@email.com";
+    final String password = "password";
 
     @BeforeEach
     void setUp() {

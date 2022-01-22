@@ -11,33 +11,31 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 @DisplayName("JwtUtils 테스트")
 @ExtendWith({MockitoExtension.class})
 class JwtUtilsTest {
 
-    @InjectMocks private JwtUtils jwtUtils;
-    @Mock private Authentication authentication;
+    @InjectMocks JwtUtils jwtUtils;
+    @Mock Authentication authentication;
 
-    private final String email = "email@email.com";
-    private final String jwtSecret = "secret";
-    private final String invalidJwtSecret = "failSecret";
-    private final long jwtExpiration = 864000;
-    private final long jwtExpiredExpiration = 0;
-    private final long jwtRefreshExpiration = 8640000;
-    private final long jwtRefreshExpiredExpiration = 0;
-    private TokenType accessTokenType = TokenType.ACCESS_TOKEN;
+    final String email = "email@email.com";
+    final String jwtSecret = "secret";
+    final String invalidJwtSecret = "failSecret";
+    final long jwtExpiration = 864000;
+    final long jwtExpiredExpiration = 0;
+    final long jwtRefreshExpiration = 8640000;
+    final long jwtRefreshExpiredExpiration = 0;
+    TokenType accessTokenType = TokenType.ACCESS_TOKEN;
 
-    private UserDetailsImpl userDetails;
+    UserDetailsImpl userDetails;
 
-    private void setJwtTokenInfo(String jwtSecret, long jwtExpiration, long jwtRefreshExpiration) {
+    void setJwtTokenInfo(String jwtSecret, long jwtExpiration, long jwtRefreshExpiration) {
         User user = User.builder().email(email).build();
         userDetails = UserDetailsImpl.build(user);
 

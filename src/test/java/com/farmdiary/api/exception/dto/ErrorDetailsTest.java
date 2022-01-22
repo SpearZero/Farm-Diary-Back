@@ -8,8 +8,8 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("ErrorDetails 테스트")
 class ErrorDetailsTest {
 
-    private final Result<String> message = new Result<String>("message1");
-    private final String details = "details1";
+    final Result<String> message = new Result<String>("message1");
+    final String details = "details1";
 
     @Test
     @DisplayName("getErrorDetails를 호출하면 ErrorDetails가 생성된다.")

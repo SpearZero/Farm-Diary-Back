@@ -1,5 +1,6 @@
 package com.farmdiary.api.dto.diary;
 
+import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,16 +23,16 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("PostDiaryRequest 테스트")
 class CreateDiaryRequestTest {
 
-    private static Validator validator;
+    static Validator validator;
 
-    private final String title = "title";
-    private final LocalDate workDay = LocalDate.of(2022, 01,21);
-    private final String field = "field";
-    private final String crop = "crop";
-    private final BigDecimal temperature = BigDecimal.valueOf(12.45);
-    private final String weather = Weather.SUNNY.getCode();
-    private final Integer precipitation = 100;
-    private final String workDetail = "workDetail";
+    final String title = "title";
+    final LocalDate workDay = LocalDate.of(2022, 01,21);
+    final String field = "field";
+    final String crop = "crop";
+    final BigDecimal temperature = BigDecimal.valueOf(12.45);
+    final String weather = Weather.SUNNY.getCode();
+    final Integer precipitation = 100;
+    final String workDetail = "workDetail";
 
     @BeforeAll
     static void setUp() {
@@ -39,7 +40,28 @@ class CreateDiaryRequestTest {
         validator = factory.getValidator();
     }
 
-    private static Stream<String> blankValue() {
+    @Test
+    @DisplayName("toEntity 호출시 Diary Entity 반환")
+    void CreateDiaryRequest_to_Entity_return_Entity() {
+        // given
+        CreateDiaryRequest request = new CreateDiaryRequest(title, workDay, field, crop, temperature,
+                weather, precipitation, workDetail);
+
+        // when
+        Diary diary = request.toEntity();
+
+        // then
+        assertThat(diary.getTitle()).isEqualTo(title);
+        assertThat(diary.getWorkDay()).isEqualTo(workDay);
+        assertThat(diary.getField()).isEqualTo(field);
+        assertThat(diary.getCrop()).isEqualTo(crop);
+        assertThat(diary.getTemperature()).isEqualTo(temperature.doubleValue());
+        assertThat(diary.getWeather()).isEqualTo(Weather.weather(weather).get());
+        assertThat(diary.getPrecipitation()).isEqualTo(precipitation);
+        assertThat(diary.getWorkDetail()).isEqualTo(workDetail);
+    }
+
+    static Stream<String> blankValue() {
         return Stream.of(null, "", " ", "  ");
     }
 
@@ -58,8 +80,9 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<String> invalidTitle() {
-        return Stream.of("안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요!");
+    static Stream<String> invalidTitle() {
+        return Stream.of("안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요!");
     }
 
     @ParameterizedTest(name = "{index} - input title = {0}")
@@ -77,7 +100,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<String> validTitle() {
+    static Stream<String> validTitle() {
         return Stream.of("유효한제목", "안녕하세요 작업입니다.", "제목이에요.");
     }
 
@@ -111,6 +134,27 @@ class CreateDiaryRequestTest {
         Assertions.assertThat(violations.isEmpty()).isFalse();
     }
 
+    static Stream<LocalDate> validWorkDay() {
+        return Stream.of(LocalDate.of(2019,05,05),
+                LocalDate.of(2020,1,15),
+                LocalDate.of(2022,01,21));
+    }
+
+    @ParameterizedTest(name = "{index} - input workDay = {0}")
+    @MethodSource("validWorkDay")
+    @DisplayName("영농일지 작업날짜가 유효한 경우 검증 성공")
+    void CreateDiaryRequest_workDay_valid_then_CreateDiaryRequest_workDay_success(LocalDate workDay) {
+        // given
+        CreateDiaryRequest request = new CreateDiaryRequest(title, workDay, field, crop, temperature,
+                weather, precipitation, workDetail);
+
+        // when
+        Set<ConstraintViolation<CreateDiaryRequest>> violations = validator.validate(request);
+
+        // then
+        assertThat(violations.isEmpty()).isTrue();
+    }
+
     @ParameterizedTest(name = "{index} - input field = {0}")
     @MethodSource("blankValue")
     @DisplayName("영농일지 필지에 공백 또는 null이 들어올 경우 검증 실패")
@@ -126,7 +170,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<String> invalidField() {
+    static Stream<String> invalidField() {
         return Stream.of("작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지!!!");
     }
 
@@ -145,7 +189,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<String> validField() {
+    static Stream<String> validField() {
         return Stream.of("1번지", "10-5번지", "222-11번지");
     }
 
@@ -178,7 +222,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<BigDecimal> invalidTemperature() {
+    static Stream<BigDecimal> invalidTemperature() {
         return Stream.of(BigDecimal.valueOf(111.11), BigDecimal.valueOf(11.123), BigDecimal.valueOf(111), BigDecimal.valueOf(0.123));
     }
 
@@ -197,7 +241,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<BigDecimal> validTemperature() {
+    static Stream<BigDecimal> validTemperature() {
         return Stream.of(BigDecimal.valueOf(00.00), BigDecimal.valueOf(99.99), BigDecimal.valueOf(23.42), BigDecimal.valueOf(19));
     }
 
@@ -231,7 +275,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<String> invalidCrop() {
+    static Stream<String> invalidCrop() {
         return Stream.of("작목작목작목작목작목작목작목작목작목작목!");
     }
 
@@ -250,7 +294,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<String> validCrop() {
+    static Stream<String> validCrop() {
         return Stream.of("딸기", "사과", "배추");
     }
 
@@ -284,7 +328,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<String> invalidWeatherCode() {
+    static Stream<String> invalidWeatherCode() {
         return Stream.of("W05", "W06", "W0");
     }
 
@@ -303,7 +347,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<String> validWeatherCode() {
+    static Stream<String> validWeatherCode() {
         return Stream.of(Weather.SUNNY.getCode(), Weather.CLOUDY.getCode(), Weather.RAINY.getCode(),
                 Weather.SNOWY.getCode(), Weather.ETC.getCode());
     }
@@ -337,7 +381,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<Integer> invalidPrecipitation() {
+    static Stream<Integer> invalidPrecipitation() {
         return Stream.of(-100, -52, -10);
     }
 
@@ -356,7 +400,7 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isFalse();
     }
 
-    private static Stream<Integer> validPrecipitation() {
+    static Stream<Integer> validPrecipitation() {
         return Stream.of(100, 52, 10);
     }
 
@@ -391,12 +435,12 @@ class CreateDiaryRequestTest {
     }
 
 
-    private static Stream<String> validWorkDetail() {
+    static Stream<String> validWorkDetail() {
         return Stream.of("밭에 물주기", "밭에 거름뿌리기", "씨앗심기");
     }
 
     @ParameterizedTest(name = "{index} - input workDetail = {0}")
-    @MethodSource("validCrop")
+    @MethodSource("validWorkDetail")
     @DisplayName("영농일지 작업내용이 유효한 경우 검증 성공")
     void CreateDiaryRequest_work_detail_valid_then_CreateDiaryRequest_work_detail_success(String workDetail) {
         // given

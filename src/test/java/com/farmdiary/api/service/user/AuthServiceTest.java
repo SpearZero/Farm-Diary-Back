@@ -31,16 +31,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
-    @InjectMocks private AuthService authService;
-    @Mock private UserRepository userRepository;
-    @Mock private RoleRepository roleRepository;
-    @Mock private UserRoleRepository userRoleRepository;
-    @Mock private PasswordEncoder passwordEncoder;
+    @InjectMocks AuthService authService;
+    @Mock UserRepository userRepository;
+    @Mock RoleRepository roleRepository;
+    @Mock UserRoleRepository userRoleRepository;
+    @Mock PasswordEncoder passwordEncoder;
 
-    private final String nickName = "nickName";
-    private final String email = "email@email.com";
-    private final String password = "passW0rd1!";
-    private final Long userId = 1L;
+    final String nickName = "nickName";
+    final String email = "email@email.com";
+    final String password = "passW0rd1!";
+    final Long userId = 1L;
 
     @Test
     @DisplayName("회원 가입시 유저 닉네임이 중복되면 DiaryAPIException 예외 발생")
@@ -103,6 +103,6 @@ class AuthServiceTest {
         SignUpResponse response = authService.save(signUpRequest);
 
         // then
-        assertThat(response.getId()).isEqualTo(userId);
+        assertThat(response.getUser_id()).isEqualTo(userId);
     }
 }

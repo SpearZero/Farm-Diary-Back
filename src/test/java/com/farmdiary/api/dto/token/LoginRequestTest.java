@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("LoginRequest 테스트")
 class LoginRequestTest {
 
-    private static Validator validator;
+    static Validator validator;
 
     @BeforeAll
     static void setUp() {

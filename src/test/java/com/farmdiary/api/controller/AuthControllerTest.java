@@ -69,7 +69,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(userId));
+                .andExpect(jsonPath("$.user_id").value(userId));
     }
 
     @Test

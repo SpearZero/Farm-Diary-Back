@@ -1,4 +1,4 @@
-package com.farmdiary.api.validation;
+package com.farmdiary.api.validation.code;
 
 import com.farmdiary.api.entity.BaseEnum;
 
@@ -6,8 +6,9 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
-@Constraint(validatedBy = EnumValidator.class)
+@Constraint(validatedBy = ContainCodeValidator.class)
 @Target(ElementType.FIELD)
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ContainCode {
 

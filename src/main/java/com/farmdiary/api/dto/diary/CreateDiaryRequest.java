@@ -1,7 +1,8 @@
 package com.farmdiary.api.dto.diary;
 
+import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
-import com.farmdiary.api.validation.ContainCode;
+import com.farmdiary.api.validation.code.ContainCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ public class CreateDiaryRequest {
     @Length(max = 50)
     private String title;
 
-    @NotNull(message = "값이 존재하지 않습니다.")
+    @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate work_day;
 
@@ -39,7 +40,7 @@ public class CreateDiaryRequest {
 
     @NotBlank
     @ContainCode(target = Weather.class, message = "유효한 값이 아닙니다.")
-    private String weather;
+    private String weather = Weather.ETC.getCode();
 
     @NotNull
     @Min(value = 0)
@@ -47,4 +48,19 @@ public class CreateDiaryRequest {
 
     @NotBlank
     private String work_detail;
+
+    public Diary toEntity() {
+        Weather codeToWeather = Weather.weather(this.weather).get();
+
+        return Diary.builder()
+                .title(title)
+                .workDay(work_day)
+                .field(field)
+                .crop(crop)
+                .temperature(temperature.doubleValue())
+                .weather(codeToWeather)
+                .precipitation(precipitation)
+                .workDetail(work_detail)
+                .build();
+    }
 }

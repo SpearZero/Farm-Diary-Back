@@ -3,7 +3,6 @@ package com.farmdiary.api.entity.diary;
 import com.farmdiary.api.entity.BaseEnum;
 import com.farmdiary.api.exception.DiaryApiException;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.Optional;
 
@@ -19,7 +18,7 @@ public enum Weather implements BaseEnum {
     private String viewName;
     private String code;
 
-    static Optional<Weather> weather(String code) {
+    public static Optional<Weather> weather(String code) {
         if (null == code || code.isBlank()) return Optional.empty();
 
         for (Weather weather : values()) {

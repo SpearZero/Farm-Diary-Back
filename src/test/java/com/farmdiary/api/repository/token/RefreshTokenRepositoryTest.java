@@ -1,7 +1,6 @@
 package com.farmdiary.api.repository.token;
 
 import com.farmdiary.api.entity.token.RefreshToken;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,8 +16,8 @@ import static org.assertj.core.api.Assertions.*;
 @DataJpaTest
 class RefreshTokenRepositoryTest {
 
-    @Autowired private RefreshTokenRepository refreshTokenRepository;
-    private final String token = "refreshToken";
+    @Autowired RefreshTokenRepository refreshTokenRepository;
+    final String token = "refreshToken";
 
     @BeforeEach()
     void setUp() {

@@ -19,9 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -36,20 +34,20 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AuthTokenFilterTest {
 
-    @InjectMocks private AuthTokenFilter authTokenFilter;
-    @Mock private JwtUtils jwtUtils;
-    @Mock private UserDetailsService userDetailsService;
-    @Mock private Authentication authentication;
+    @InjectMocks AuthTokenFilter authTokenFilter;
+    @Mock JwtUtils jwtUtils;
+    @Mock UserDetailsService userDetailsService;
+    @Mock Authentication authentication;
 
-    private MockHttpServletRequest request;
-    private MockHttpServletResponse response;
-    private MockFilterChain filterChain;
-    private AuthTokenFilter jwtFilter;
+    MockHttpServletRequest request;
+    MockHttpServletResponse response;
+    MockFilterChain filterChain;
+    AuthTokenFilter jwtFilter;
 
-    private final String authorizationHeader = "Authorization";
-    private final String email = "email@email.com";
-    private final String jwtSecret = "secret";
-    private final long jwtExpirationMs = 864000;
+    final String authorizationHeader = "Authorization";
+    final String email = "email@email.com";
+    final String jwtSecret = "secret";
+    final long jwtExpirationMs = 864000;
 
     @BeforeEach
     void setUp() {
@@ -64,7 +62,7 @@ class AuthTokenFilterTest {
         SecurityContextHolder.clearContext();
     }
 
-    private String makeJwtToken() {
+    String makeJwtToken() {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())

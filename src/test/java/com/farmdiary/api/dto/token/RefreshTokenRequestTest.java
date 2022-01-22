@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("RefreshTokenRequest 테스트")
 class RefreshTokenRequestTest {
 
-    private static Validator validator;
+    static Validator validator;
 
     @BeforeAll
     static void setUp() {

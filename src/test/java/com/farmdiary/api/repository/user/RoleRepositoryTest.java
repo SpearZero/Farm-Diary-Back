@@ -17,8 +17,7 @@ import static org.assertj.core.api.Assertions.*;
 @DataJpaTest
 class RoleRepositoryTest {
 
-    @Autowired
-    private RoleRepository roleRepository;
+    @Autowired RoleRepository roleRepository;
 
     @BeforeEach
     void setUp() {

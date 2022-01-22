@@ -38,25 +38,25 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TokenServiceTest {
 
-    @InjectMocks private TokenService tokenService;
-    @Mock private RefreshTokenRepository refreshTokenRepository;
-    @Mock private UserRepository userRepository;
-    @Mock private AuthenticationManager authenticationManager;
-    @Mock private JwtUtils jwtUtils;
-    @Mock private Authentication authentication;
+    @InjectMocks TokenService tokenService;
+    @Mock RefreshTokenRepository refreshTokenRepository;
+    @Mock UserRepository userRepository;
+    @Mock AuthenticationManager authenticationManager;
+    @Mock JwtUtils jwtUtils;
+    @Mock Authentication authentication;
 
-    private final String email = "email@email.com";
-    private final String password = "passW0rd1!";
-    private final Long userId = 1L;
+    final String email = "email@email.com";
+    final String password = "passW0rd1!";
+    final Long userId = 1L;
 
-    private final String jwtSecret = "testSecret";
-    private final long jwtExpirationMs = 300000;
-    private final long jwtRefreshExpirationMs = 3000000;
-    private final long jwtRefreshExpiredExpirationMs = -1;
+    final String jwtSecret = "testSecret";
+    final long jwtExpirationMs = 300000;
+    final long jwtRefreshExpirationMs = 3000000;
+    final long jwtRefreshExpiredExpirationMs = -1;
 
-    private final Long tokenId = 1L;
+    final Long tokenId = 1L;
 
-    private String makeJwtToken(long tokenExpirationsMs) {
+    String makeJwtToken(long tokenExpirationsMs) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
