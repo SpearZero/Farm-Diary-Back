@@ -19,7 +19,7 @@ class DiaryTest {
     final String field = "field";
     final String crop = "crop";
     final Double temperature = 0.0;
-    final Weather weather = Weather.SUNNY;
+    final Optional<Weather> weather = Optional.of(Weather.SUNNY);
     final Integer precipitation = 0;
     final String workDetail = "workDetail";
     
@@ -44,7 +44,7 @@ class DiaryTest {
                 .field(field)
                 .crop(crop)
                 .temperature(temperature)
-                .weather(weather)
+                .weather(weather.get())
                 .precipitation(precipitation)
                 .workDetail(workDetail)
                 .build();
@@ -57,7 +57,7 @@ class DiaryTest {
         String changedTitle = "changedTitle";
 
         // when
-        diary.updateTitle(changedTitle);
+        diary.update(changedTitle, workDay, field, crop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(title).isNotEqualTo(diary.getTitle());
@@ -70,7 +70,7 @@ class DiaryTest {
         String changedTitle = null;
 
         // when
-        diary.updateTitle(changedTitle);
+        diary.update(changedTitle, workDay, field, crop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(title).isEqualTo(diary.getTitle());
@@ -83,7 +83,7 @@ class DiaryTest {
         String changedTitle = " ";
 
         // when
-        diary.updateTitle(changedTitle);
+        diary.update(changedTitle, workDay, field, crop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(title).isEqualTo(diary.getTitle());
@@ -96,7 +96,7 @@ class DiaryTest {
         LocalDate changedWorkDay = LocalDate.of(2022,01,04);
 
         // when
-        diary.updateWorkDay(changedWorkDay);
+        diary.update(title, changedWorkDay, field, crop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(workDay).isNotEqualTo(diary.getWorkDay());
@@ -109,7 +109,7 @@ class DiaryTest {
         LocalDate changedWorkDay = null;
 
         // when
-        diary.updateWorkDay(changedWorkDay);
+        diary.update(title, changedWorkDay, field, crop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(workDay).isEqualTo(diary.getWorkDay());
@@ -122,7 +122,7 @@ class DiaryTest {
         String changedField = "changedField";
 
         // when
-        diary.updateField(changedField);
+        diary.update(title, workDay, changedField, crop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(field).isNotEqualTo(diary.getField());
@@ -135,7 +135,7 @@ class DiaryTest {
         String changedField = null;
 
         // when
-        diary.updateField(changedField);
+        diary.update(title, workDay, changedField, crop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(field).isEqualTo(diary.getField());
@@ -148,7 +148,7 @@ class DiaryTest {
         String changedField = " ";
 
         // when
-        diary.updateField(changedField);
+        diary.update(title, workDay, changedField, crop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(field).isEqualTo(diary.getField());
@@ -161,7 +161,7 @@ class DiaryTest {
         String changedCrop = "changedCrop";
 
         // when
-        diary.updateCrop(changedCrop);
+        diary.update(title, workDay, field, changedCrop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(crop).isNotEqualTo(diary.getCrop());
@@ -174,7 +174,7 @@ class DiaryTest {
         String changedCrop = null;
 
         // when
-        diary.updateCrop(changedCrop);
+        diary.update(title, workDay, field, changedCrop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(crop).isEqualTo(diary.getCrop());
@@ -187,7 +187,7 @@ class DiaryTest {
         String changedCrop = " ";
 
         // when
-        diary.updateCrop(changedCrop);
+        diary.update(title, workDay, field, changedCrop, weather, temperature, precipitation, workDetail);
 
         // then
         assertThat(crop).isEqualTo(diary.getCrop());
@@ -200,7 +200,7 @@ class DiaryTest {
         Double changedTemperature = 0.1;
 
         // when
-        diary.updateTemperature(changedTemperature);
+        diary.update(title, workDay, field, crop, weather, changedTemperature, precipitation, workDetail);
 
         // then
         assertThat(temperature).isNotEqualTo(diary.getTemperature());
@@ -213,7 +213,7 @@ class DiaryTest {
         Double changedTemperature = null;
 
         // when
-        diary.updateTemperature(changedTemperature);
+        diary.update(title, workDay, field, crop, weather, changedTemperature, precipitation, workDetail);
 
         // then
         assertThat(temperature).isEqualTo(diary.getTemperature());
@@ -226,10 +226,10 @@ class DiaryTest {
         Optional<Weather> changedWeather = Optional.of(Weather.RAINY);
 
         // when
-        diary.updateWeather(changedWeather);
+        diary.update(title, workDay, field, crop, changedWeather, temperature, precipitation, workDetail);
 
         // then
-        assertThat(weather).isNotSameAs(diary.getWeather());
+        assertThat(weather.get()).isNotSameAs(diary.getWeather());
     }
 
     @Test
@@ -239,10 +239,10 @@ class DiaryTest {
         Optional<Weather> changedWeather = Optional.empty();
 
         // when
-        diary.updateWeather(changedWeather);
+        diary.update(title, workDay, field, crop, changedWeather, temperature, precipitation, workDetail);
 
         // then
-        assertThat(weather).isSameAs(diary.getWeather());
+        assertThat(weather.get()).isSameAs(diary.getWeather());
     }
     
     @Test
@@ -252,7 +252,7 @@ class DiaryTest {
         Integer changedPrecipitation = 10;
 
         // when
-        diary.updatePrecipitation(changedPrecipitation);
+        diary.update(title, workDay, field, crop, weather, temperature, changedPrecipitation, workDetail);
 
         // then
         assertThat(precipitation).isNotEqualTo(diary.getPrecipitation());
@@ -265,7 +265,7 @@ class DiaryTest {
         Integer changedPrecipitation = null;
 
         // when
-        diary.updatePrecipitation(changedPrecipitation);
+        diary.update(title, workDay, field, crop, weather, temperature, changedPrecipitation, workDetail);
 
         // then
         assertThat(precipitation).isEqualTo(diary.getPrecipitation());
@@ -278,7 +278,7 @@ class DiaryTest {
         Integer changedPrecipitation = -1;
 
         // when
-        diary.updatePrecipitation(changedPrecipitation);
+        diary.update(title, workDay, field, crop, weather, temperature, changedPrecipitation, workDetail);
 
         // then
         assertThat(precipitation).isEqualTo(diary.getPrecipitation());
@@ -291,7 +291,7 @@ class DiaryTest {
         String changedWorkDetail = "changedWorkDetail";
 
         // when
-        diary.updateWorkDetail(changedWorkDetail);
+        diary.update(title, workDay, field, crop, weather, temperature, precipitation, changedWorkDetail);
 
         // then
         assertThat(workDetail).isNotEqualTo(diary.getWorkDetail());
@@ -304,7 +304,7 @@ class DiaryTest {
         String changedWorkDetail = null;
 
         // when
-        diary.updateWorkDetail(changedWorkDetail);
+        diary.update(title, workDay, field, crop, weather, temperature, precipitation, changedWorkDetail);
 
         // then
         assertThat(workDetail).isEqualTo(diary.getWorkDetail());
@@ -317,7 +317,7 @@ class DiaryTest {
         String changedWorkDetail = " ";
 
         // when
-        diary.updateWorkDetail(changedWorkDetail);
+        diary.update(title, workDay, field, crop, weather, temperature, precipitation, changedWorkDetail);
 
         // then
         assertThat(workDetail).isEqualTo(diary.getWorkDetail());
@@ -339,9 +339,6 @@ class DiaryTest {
     @Test
     @DisplayName("유저가 null이 아니면 연관관계 설정")
     void user_verified_and_not_null_user_set() {
-        // given
-        user.verifyEmail();
-
         // when
         diary.setUser(user);
 

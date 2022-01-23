@@ -2,12 +2,13 @@ package com.farmdiary.api.dto.diary;
 
 import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
-import com.farmdiary.api.validation.code.ContainCode;
+import com.farmdiary.api.validation.code.NullOrContainCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
@@ -38,13 +39,12 @@ public class CreateDiaryRequest {
     @Digits(integer = 2, fraction = 2)
     private BigDecimal temperature;
 
-    @NotBlank
-    @ContainCode(target = Weather.class, message = "유효한 값이 아닙니다.")
+    @NullOrContainCode(target = Weather.class, message = "유효한 값이 아닙니다.")
     private String weather = Weather.ETC.getCode();
 
-    @NotNull
+    @Nullable
     @Min(value = 0)
-    private Integer precipitation;
+    private Integer precipitation = 0;
 
     @NotBlank
     private String work_detail;

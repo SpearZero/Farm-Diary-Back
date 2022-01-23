@@ -118,7 +118,7 @@ class AuthControllerTest {
                 new RefreshTokenResponse(newAccessToken, generatedRefreshToken));
 
         // when, then
-        mvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/accessToken")
+        mvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/accesstoken")
                 .content(body)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))

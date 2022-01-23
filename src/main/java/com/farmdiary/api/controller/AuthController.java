@@ -31,7 +31,7 @@ public class AuthController {
         return new ResponseEntity<>(authService.save(signUpRequest), HttpStatus.CREATED);
     }
 
-    @PostMapping("/accessToken")
+    @PostMapping("/accesstoken")
     public ResponseEntity<?> getAccessToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         return new ResponseEntity<>(tokenService.getNewAccessToken(refreshTokenRequest), HttpStatus.CREATED);
     }

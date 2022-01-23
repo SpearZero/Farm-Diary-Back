@@ -2,6 +2,8 @@ package com.farmdiary.api.service.diary;
 
 import com.farmdiary.api.dto.diary.CreateDiaryRequest;
 import com.farmdiary.api.dto.diary.CreateDiaryResponse;
+import com.farmdiary.api.dto.diary.UpdateDiaryRequest;
+import com.farmdiary.api.dto.diary.UpdateDiaryResponse;
 import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
 import com.farmdiary.api.entity.user.User;
@@ -85,8 +87,8 @@ class DiaryServiceTest {
     @DisplayName("사용자가 영농일지 저장시 존재하지 않는 사용자면 ResourceNotFoundException 반환")
     void save_diary_user_not_exists_then_throw_ResourceNotFoundExeption() {
         // given
-        CreateDiaryRequest request = new CreateDiaryRequest(title, workDay, field, crop, requestTemperature,
-                requestWeather, precipitation, workDetail);
+        CreateDiaryRequest request = new CreateDiaryRequest(title, workDay, field, crop,
+                requestTemperature, requestWeather, precipitation, workDetail);
 
         // when
         when(userRepository.findById(userId)).thenThrow(new ResourceNotFoundException("사용자", "ID"));
@@ -99,8 +101,8 @@ class DiaryServiceTest {
     @DisplayName("사용자가 영농일지 저장시 영농일지 저장 성공")
     void save_diary_then_save_success() {
         // given
-        CreateDiaryRequest request = new CreateDiaryRequest(title, workDay, field, crop, requestTemperature,
-                requestWeather, precipitation, workDetail);
+        CreateDiaryRequest request = new CreateDiaryRequest(title, workDay, field, crop,
+                requestTemperature, requestWeather, precipitation, workDetail);
 
         // when
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -109,5 +111,52 @@ class DiaryServiceTest {
 
         // then
         assertThat(response.getDiary_id()).isEqualTo(diary.getId());
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 수정시 존재하지 않는 사용자면 ResourceNotFoundException 반환")
+    void update_diary_user_not_exists_then_throw_ResourceNotFoundExeption() {
+        // given
+        UpdateDiaryRequest updateDiaryRequest = new UpdateDiaryRequest(title, workDay, field, crop,
+                requestTemperature, requestWeather, precipitation, workDetail);
+
+        // when
+        when(userRepository.existsById(userId)).thenThrow(new ResourceNotFoundException("사용자", "ID"));
+
+        // then
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> diaryService.update(userId, diaryId, updateDiaryRequest));
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 수정시 존재하지 않는 영농일지면 ResourceNotFoundException 반환")
+    void update_diary_diary_not_exists_then_throw_ResoureceNotFoundException() {
+        // given
+        UpdateDiaryRequest updateDiaryRequest = new UpdateDiaryRequest(title, workDay, field, crop,
+                requestTemperature, requestWeather, precipitation, workDetail);
+
+        // when
+        when(userRepository.existsById(userId)).thenReturn(Boolean.TRUE);
+        when(diaryRepository.findById(diaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
+
+        // then
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> diaryService.update(userId, diaryId, updateDiaryRequest));
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 수정시 영농일지 수정 성공")
+    void update_diary_then_update_success() {
+        // given
+        UpdateDiaryRequest updateDiaryRequest = new UpdateDiaryRequest(title, workDay, field, crop,
+                requestTemperature, requestWeather, precipitation, workDetail);
+
+        // when
+        when(userRepository.existsById(userId)).thenReturn(Boolean.TRUE);
+        when(diaryRepository.findById(diaryId)).thenReturn(Optional.of(diary));
+        UpdateDiaryResponse updateDiaryResponse = diaryService.update(userId, diaryId, updateDiaryRequest);
+
+        // then
+        assertThat(updateDiaryResponse.getDiary_id()).isEqualTo(diaryId);
     }
 }

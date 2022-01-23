@@ -171,7 +171,8 @@ class CreateDiaryRequestTest {
     }
 
     static Stream<String> invalidField() {
-        return Stream.of("작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지!!!");
+        return Stream.of("작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필" +
+                "지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지작업필지!!!");
     }
 
     @ParameterizedTest(name = "{index} - input field = {0}")
@@ -313,9 +314,13 @@ class CreateDiaryRequestTest {
         assertThat(violations.isEmpty()).isTrue();
     }
 
+    static Stream<String> emptyValue() {
+        return Stream.of("", " ", "  ");
+    }
+
     @ParameterizedTest(name = "{index} - input weather = {0}")
-    @MethodSource("blankValue")
-    @DisplayName("영농일지 날씨에 공백 또는 null이 들어올 경우 검증 실패")
+    @MethodSource("emptyValue")
+    @DisplayName("영농일지 날씨에 공백이 들어올 경우 검증 실패")
     void CreateDiaryRequest_weather_blank_then_CreateDiaryRequest_weather_fail(String weather) {
         // given
         CreateDiaryRequest request = new CreateDiaryRequest(title, workDay, field, crop, temperature,
@@ -366,10 +371,24 @@ class CreateDiaryRequestTest {
         // then
         assertThat(violations.isEmpty()).isTrue();
     }
+    
+    @Test
+    @DisplayName("영농일지 날씨에 null값이 들어올 경우 검증 성공")
+    void CreateDiaryRequest_weather_null_then_CreateDiaryRequest_weather_success() {
+        // given
+        CreateDiaryRequest request = new CreateDiaryRequest(title, workDay, field, crop, temperature,
+                null, precipitation, workDetail);
+
+        // when
+        Set<ConstraintViolation<CreateDiaryRequest>> violations = validator.validate(request);
+
+        // then
+        assertThat(violations.isEmpty()).isTrue();
+    }
 
     @Test
-    @DisplayName("영농일지 강수량에 null이 들어올 경우 검증 실패")
-    void CreateDiaryRequest_precipitation_null_then_CreateDiaryRequest_precipitation_fail() {
+    @DisplayName("영농일지 강수량에 null이 들어올 경우 검증 성공")
+    void CreateDiaryRequest_precipitation_null_then_CreateDiaryRequest_precipitation_success() {
         // given
         CreateDiaryRequest request = new CreateDiaryRequest(title, workDay, field, crop, temperature,
                 weather, null, workDetail);
@@ -378,7 +397,7 @@ class CreateDiaryRequestTest {
         Set<ConstraintViolation<CreateDiaryRequest>> violations = validator.validate(request);
 
         // then
-        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.isEmpty()).isTrue();
     }
 
     static Stream<Integer> invalidPrecipitation() {

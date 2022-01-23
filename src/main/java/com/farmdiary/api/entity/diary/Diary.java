@@ -70,49 +70,61 @@ public class Diary extends BaseTimeEntity {
         }
     }
 
-    public void updateTitle(String title) {
+    private void updateTitle(String title) {
         if (null != title && !title.isBlank()) {
             this.title = title;
         }
     }
 
-    public void updateWorkDay(LocalDate workDay) {
+    private void updateWorkDay(LocalDate workDay) {
         if (null != workDay) {
             this.workDay = workDay;
         }
     }
 
-    public void updateField(String field) {
+    private void updateField(String field) {
         if (null != field && !field.isBlank()) {
             this.field = field;
         }
     }
 
-    public void updateCrop(String crop) {
+    private void updateCrop(String crop) {
         if (null != crop && !crop.isBlank()) {
             this.crop = crop;
         }
     }
 
-    public void updateTemperature(Double temperature) {
+    private void updateTemperature(Double temperature) {
         if (null != temperature) {
             this.temperature = temperature;
         }
     }
 
-    public void updateWeather(Optional<Weather> weather) {
+    private void updateWeather(Optional<Weather> weather) {
         this.weather = weather.orElseGet(this::getWeather);
     }
 
-    public void updatePrecipitation(Integer precipitation) {
+    private void updatePrecipitation(Integer precipitation) {
         if (null != precipitation && precipitation >= 0) {
             this.precipitation = precipitation;
         }
     }
 
-    public void updateWorkDetail(String workDetail) {
+    private void updateWorkDetail(String workDetail) {
         if (null != workDetail && !workDetail.isBlank()) {
             this.workDetail = workDetail;
         }
+    }
+
+    public void update(String title, LocalDate workDay, String field, String crop, Optional<Weather> weather,
+                        Double temperature, Integer precipitation, String workDetail) {
+        this.updateTitle(title);
+        this.updateWorkDay(workDay);
+        this.updateField(field);
+        this.updateCrop(crop);
+        this.updateWeather(weather);
+        this.updateTemperature(temperature);
+        this.updatePrecipitation(precipitation);
+        this.updateWorkDetail(workDetail);
     }
 }

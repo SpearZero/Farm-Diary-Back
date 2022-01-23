@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CreateDiaryResponse {
+public class UpdateDiaryResponse {
 
     private Long diary_id;
 }
