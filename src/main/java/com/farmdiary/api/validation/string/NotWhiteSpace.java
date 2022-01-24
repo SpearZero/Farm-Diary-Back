@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NotWhiteSpace {
 
-    String message() default "입력갑이 공백입니다.";
+    String message() default "입력값이 공백입니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
