@@ -61,6 +61,7 @@ class DiaryTest {
 
         // then
         assertThat(title).isNotEqualTo(diary.getTitle());
+        assertThat(changedTitle).isEqualTo(diary.getTitle());
     }
 
     @Test
@@ -100,6 +101,7 @@ class DiaryTest {
 
         // then
         assertThat(workDay).isNotEqualTo(diary.getWorkDay());
+        assertThat(changedWorkDay).isEqualTo(diary.getWorkDay());
     }
     
     @Test
@@ -126,6 +128,7 @@ class DiaryTest {
 
         // then
         assertThat(field).isNotEqualTo(diary.getField());
+        assertThat(changedField).isEqualTo(diary.getField());
     }
 
     @Test
@@ -165,6 +168,7 @@ class DiaryTest {
 
         // then
         assertThat(crop).isNotEqualTo(diary.getCrop());
+        assertThat(changedCrop).isEqualTo(diary.getCrop());
     }
 
     @Test
@@ -204,6 +208,7 @@ class DiaryTest {
 
         // then
         assertThat(temperature).isNotEqualTo(diary.getTemperature());
+        assertThat(changedTemperature).isEqualTo(diary.getTemperature());
     }
 
     @Test
@@ -230,6 +235,7 @@ class DiaryTest {
 
         // then
         assertThat(weather.get()).isNotSameAs(diary.getWeather());
+        assertThat(changedWeather.get()).isSameAs(diary.getWeather());
     }
 
     @Test
@@ -256,6 +262,7 @@ class DiaryTest {
 
         // then
         assertThat(precipitation).isNotEqualTo(diary.getPrecipitation());
+        assertThat(changedPrecipitation).isEqualTo(diary.getPrecipitation());
     }
 
     @Test
@@ -295,6 +302,7 @@ class DiaryTest {
 
         // then
         assertThat(workDetail).isNotEqualTo(diary.getWorkDetail());
+        assertThat(changedWorkDetail).isEqualTo(diary.getWorkDetail());
     }
 
     @Test
