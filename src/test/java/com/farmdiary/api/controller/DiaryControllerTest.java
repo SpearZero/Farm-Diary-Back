@@ -2,12 +2,16 @@ package com.farmdiary.api.controller;
 
 import com.farmdiary.api.dto.diary.CreateDiaryRequest;
 import com.farmdiary.api.dto.diary.CreateDiaryResponse;
+import com.farmdiary.api.dto.diary.UpdateDiaryRequest;
+import com.farmdiary.api.dto.diary.UpdateDiaryResponse;
 import com.farmdiary.api.entity.diary.Weather;
 import com.farmdiary.api.security.jwt.AuthEntryPointJwt;
 import com.farmdiary.api.security.jwt.JwtUtils;
 import com.farmdiary.api.security.service.UserDetailsImpl;
 import com.farmdiary.api.service.diary.DiaryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -114,6 +118,174 @@ class DiaryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.diary_id").value(diaryId));
+    }
+
+    @Test
+    @DisplayName("영농일지 수정시 영농일지 제목만 들어올 경우 수정 성공시 성공 응답 반환")
+    @WithUserDetails(value = email)
+    void update_diary_title_then_return_update_diary_response() throws Exception {
+        // case
+        Map<String, String> map = new HashMap<>(){{ put("title", title); }};
+        String body = objectMapper.writeValueAsString(map);
+
+        /// when
+        when(diaryService.update(any(Long.class), any(Long.class), any(UpdateDiaryRequest.class)))
+                .thenReturn(new UpdateDiaryResponse(diaryId));
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.patch("/api/v1/diaries/"+diaryId)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diary_id").value(diaryId));
+    }
+    
+    @Test
+    @DisplayName("영농일지 수정시 영농일지 작업날짜만 들어올 경우 수정 성공시 성공 응답 반환")
+    @WithUserDetails(value = email)
+    void update_diary_workDay_then_return_update_diary_response() throws Exception {
+        // case
+        Map<String, String> map = new HashMap<>(){{ put("work_day", workDay.toString()); }};
+        String body = objectMapper.writeValueAsString(map);
+
+        // when
+        when(diaryService.update(any(Long.class), any(Long.class), any(UpdateDiaryRequest.class)))
+                .thenReturn(new UpdateDiaryResponse(diaryId));
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.patch("/api/v1/diaries/"+diaryId)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diary_id").value(diaryId));
+    }
+
+    @Test
+    @DisplayName("영농일지 수정시 영농일지 필지만 들어올 경우 수정 성공시 성공 응답 반환")
+    @WithUserDetails(value = email)
+    void update_diary_field_then_return_update_diary_response() throws Exception {
+        // case
+        Map<String, String> map = new HashMap<>(){{ put("field", field); }};
+        String body = objectMapper.writeValueAsString(map);
+
+        // when
+        when(diaryService.update(any(Long.class), any(Long.class), any(UpdateDiaryRequest.class)))
+                .thenReturn(new UpdateDiaryResponse(diaryId));
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.patch("/api/v1/diaries/"+diaryId)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diary_id").value(diaryId));
+    }    
+    
+    @Test
+    @DisplayName("영농일지 수정시 영농일지 작물만 들어올 경우 수정 성공시 성공 응답 반환")
+    @WithUserDetails(value = email)
+    void update_diary_crop_then_return_update_diary_response() throws Exception {
+        // case
+        Map<String, String> map = new HashMap<>(){{ put("crop", crop); }};
+        String body = objectMapper.writeValueAsString(map);
+
+        // when
+        when(diaryService.update(any(Long.class), any(Long.class), any(UpdateDiaryRequest.class)))
+                .thenReturn(new UpdateDiaryResponse(diaryId));
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.patch("/api/v1/diaries/"+diaryId)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diary_id").value(diaryId));
+    }
+
+    @Test
+    @DisplayName("영농일지 수정시 영농일지 기온만 들어올 경우 수정 성공시 성공 응답 반환")
+    @WithUserDetails(value = email)
+    void update_diary_temperature_then_return_update_diary_response() throws Exception {
+        // case
+        Map<String, String> map = new HashMap<>(){{ put("temperature", temperature.toString()); }};
+        String body = objectMapper.writeValueAsString(map);
+
+        // when
+        when(diaryService.update(any(Long.class), any(Long.class), any(UpdateDiaryRequest.class)))
+                .thenReturn(new UpdateDiaryResponse(diaryId));
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.patch("/api/v1/diaries/"+diaryId)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diary_id").value(diaryId));
+    }
+    
+    @Test
+    @DisplayName("영농일지 수정시 영농일지 날씨만 들어올 경우 수정 성공시 성공 응답 반환")
+    @WithUserDetails(value = email)
+    void update_diary_weather_then_return_update_diary_response() throws Exception {
+        // case
+        Map<String, String> map = new HashMap<>(){{ put("weather", weather); }};
+        String body = objectMapper.writeValueAsString(map);
+
+        // when
+        when(diaryService.update(any(Long.class), any(Long.class), any(UpdateDiaryRequest.class)))
+                .thenReturn(new UpdateDiaryResponse(diaryId));
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.patch("/api/v1/diaries/"+diaryId)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diary_id").value(diaryId));
+    }
+
+    @Test
+    @DisplayName("영농일지 수정시 영농일지 강수량만 들어올 경우 수정 성공시 성공 응답 반환")
+    @WithUserDetails(value = email)
+    void update_diary_precipitation_then_return_update_diary_response() throws Exception {
+        // case
+        Map<String, String> map = new HashMap<>(){{ put("precipitation", precipitation.toString()); }};
+        String body = objectMapper.writeValueAsString(map);
+
+        // when
+        when(diaryService.update(any(Long.class), any(Long.class), any(UpdateDiaryRequest.class)))
+                .thenReturn(new UpdateDiaryResponse(diaryId));
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.patch("/api/v1/diaries/"+diaryId)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diary_id").value(diaryId));
+    }
+    
+    @Test
+    @DisplayName("영농일지 수정시 영농일지 필지만 들어올 경우 수정 성공시 성공 응답 반환")
+    @WithUserDetails(value = email)
+    void update_diary_workDetail_then_return_update_diary_response() throws Exception {
+        // case
+        Map<String, String> map = new HashMap<>(){{ put("work_detail", workDetail); }};
+        String body = objectMapper.writeValueAsString(map);
+
+        // when
+        when(diaryService.update(any(Long.class), any(Long.class), any(UpdateDiaryRequest.class)))
+                .thenReturn(new UpdateDiaryResponse(diaryId));
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.patch("/api/v1/diaries/"+diaryId)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.diary_id").value(diaryId));
     }
 }
