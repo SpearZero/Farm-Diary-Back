@@ -1,9 +1,6 @@
 package com.farmdiary.api.service.diary;
 
-import com.farmdiary.api.dto.diary.CreateDiaryRequest;
-import com.farmdiary.api.dto.diary.CreateDiaryResponse;
-import com.farmdiary.api.dto.diary.UpdateDiaryRequest;
-import com.farmdiary.api.dto.diary.UpdateDiaryResponse;
+import com.farmdiary.api.dto.diary.*;
 import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
 import com.farmdiary.api.entity.user.User;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class DiaryService {
@@ -23,7 +21,6 @@ public class DiaryService {
     private final DiaryRepository diaryRepository;
     private final UserRepository userRepository;
 
-    @Transactional
     public CreateDiaryResponse save(Long userId, CreateDiaryRequest createDiaryRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("사용자", "ID"));
 
@@ -35,13 +32,13 @@ public class DiaryService {
         return new CreateDiaryResponse(savedDiary.getId());
     }
 
-    @Transactional
     public UpdateDiaryResponse update(Long userId, Long diaryId, UpdateDiaryRequest updateDiaryRequest) {
         if (!userRepository.existsById(userId)) throw new ResourceNotFoundException("사용자", "ID");
 
-        Diary diary = diaryRepository.findDiaryAndUserById(diaryId).orElseThrow(() -> new ResourceNotFoundException("영농일지", "ID"));
+        Diary diary = diaryRepository.findDiaryAndUserById(diaryId).orElseThrow(
+                () -> new ResourceNotFoundException("영농일지", "ID"));
 
-        if (!userId.equals(diary.getUser().getId())) throw new DiaryApiException("작성자와 수정자가 다릅니다.");
+        if (!userId.equals(diary.getUser().getId())) throw new DiaryApiException("작성자와 일치하지 않습니다.");
 
         Double temperature = null == updateDiaryRequest.getTemperature()
                 ? null : updateDiaryRequest.getTemperature().doubleValue();
@@ -52,5 +49,18 @@ public class DiaryService {
                         updateDiaryRequest.getWork_detail());
 
         return new UpdateDiaryResponse(diary.getId());
+    }
+
+    public DeleteDiaryResponse delete(Long userId, Long diaryId) {
+        if (!userRepository.existsById(userId)) throw new ResourceNotFoundException("사용자", "ID");
+
+        Diary diary = diaryRepository.findDiaryAndUserById(diaryId).orElseThrow(
+                () -> new ResourceNotFoundException("영농일지", "ID"));
+
+        if (!userId.equals(diary.getUser().getId())) throw new DiaryApiException("작성자와 일치하지 않습니다.");
+
+        diaryRepository.delete(diary);
+
+        return new DeleteDiaryResponse(diary.getId());
     }
 }
