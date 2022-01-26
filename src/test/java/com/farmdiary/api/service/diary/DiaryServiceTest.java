@@ -127,21 +127,6 @@ class DiaryServiceTest {
     }
     
     @Test
-    @DisplayName("사용자가 영농일지 수정시 존재하지 않는 사용자면 ResourceNotFoundException 반환")
-    void update_diary_user_not_exists_then_throw_ResourceNotFoundExeption() {
-        // given
-        UpdateDiaryRequest updateDiaryRequest = new UpdateDiaryRequest(title, workDay, field, crop,
-                requestTemperature, requestWeather, precipitation, workDetail);
-
-        // when
-        when(userRepository.existsById(userId)).thenThrow(new ResourceNotFoundException("사용자", "ID"));
-
-        // then
-        Assertions.assertThrows(ResourceNotFoundException.class,
-                () -> diaryService.update(userId, diaryId, updateDiaryRequest));
-    }
-    
-    @Test
     @DisplayName("사용자가 영농일지 수정시 존재하지 않는 영농일지면 ResourceNotFoundException 반환")
     void update_diary_diary_not_exists_then_throw_ResoureceNotFoundException() {
         // given
@@ -149,7 +134,6 @@ class DiaryServiceTest {
                 requestTemperature, requestWeather, precipitation, workDetail);
 
         // when
-        when(userRepository.existsById(userId)).thenReturn(Boolean.TRUE);
         when(diaryRepository.findDiaryAndUserById(diaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
 
         // then
@@ -165,7 +149,6 @@ class DiaryServiceTest {
                 requestTemperature, requestWeather, precipitation, workDetail);
 
         // when
-        when(userRepository.existsById(otherUserId)).thenReturn(Boolean.TRUE);
         when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
 
         // then
@@ -182,7 +165,6 @@ class DiaryServiceTest {
                 nullTemperature, requestWeather, precipitation, workDetail);
 
         // when
-        when(userRepository.existsById(userId)).thenReturn(Boolean.TRUE);
         when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
         UpdateDiaryResponse updateDiaryResponse = diaryService.update(userId, diaryId, updateDiaryRequest);
 
@@ -198,7 +180,6 @@ class DiaryServiceTest {
                 requestTemperature, requestWeather, precipitation, workDetail);
 
         // when
-        when(userRepository.existsById(userId)).thenReturn(Boolean.TRUE);
         when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
         UpdateDiaryResponse updateDiaryResponse = diaryService.update(userId, diaryId, updateDiaryRequest);
 
@@ -207,20 +188,9 @@ class DiaryServiceTest {
     }
 
     @Test
-    @DisplayName("사용자가 영농일지 삭제시 존재하지 않는 사용자면 ResourceNotFoundException 반환")
-    void delete_diary_user_not_exists_then_throw_ResourceNotFoundExeption() {
-        // when
-        when(userRepository.existsById(userId)).thenThrow(new ResourceNotFoundException("사용자", "ID"));
-
-        // then
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> diaryService.delete(userId, diaryId));
-    }
-
-    @Test
     @DisplayName("사용자가 영농일지 삭제시 존재하지 않는 영농일지면 ResourceNotFoundException 반환")
     void delete_diary_diary_not_exists_then_throw_ResoureceNotFoundException() {
         // when
-        when(userRepository.existsById(userId)).thenReturn(Boolean.TRUE);
         when(diaryRepository.findDiaryAndUserById(diaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
 
         // then
@@ -231,7 +201,6 @@ class DiaryServiceTest {
     @DisplayName("사용자가 영농일지 삭제시 다른 사용자의 영농일지를 삭제하는 경우 DiaryApiException 반환")
     void delete_diary_other_user_diary_then_throw_DiaryApiException() {
         // when
-        when(userRepository.existsById(otherUserId)).thenReturn(Boolean.TRUE);
         when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
 
         // then
@@ -242,7 +211,6 @@ class DiaryServiceTest {
     @DisplayName("사용자가 영농일지 삭제시 영농일지 삭제 성공")
     void delete_diary_then_update_success() {
         // when
-        when(userRepository.existsById(userId)).thenReturn(Boolean.TRUE);
         when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
         DeleteDiaryResponse updateDiaryResponse = diaryService.delete(userId, diaryId);
 
