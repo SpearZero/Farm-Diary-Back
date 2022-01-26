@@ -33,7 +33,6 @@ public class DiaryService {
     }
 
     public UpdateDiaryResponse update(Long userId, Long diaryId, UpdateDiaryRequest updateDiaryRequest) {
-        if (!userRepository.existsById(userId)) throw new ResourceNotFoundException("사용자", "ID");
 
         Diary diary = diaryRepository.findDiaryAndUserById(diaryId).orElseThrow(
                 () -> new ResourceNotFoundException("영농일지", "ID"));
@@ -52,7 +51,6 @@ public class DiaryService {
     }
 
     public DeleteDiaryResponse delete(Long userId, Long diaryId) {
-        if (!userRepository.existsById(userId)) throw new ResourceNotFoundException("사용자", "ID");
 
         Diary diary = diaryRepository.findDiaryAndUserById(diaryId).orElseThrow(
                 () -> new ResourceNotFoundException("영농일지", "ID"));
