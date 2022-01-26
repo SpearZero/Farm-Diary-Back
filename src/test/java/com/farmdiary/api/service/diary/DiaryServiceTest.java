@@ -7,6 +7,7 @@ import com.farmdiary.api.dto.diary.UpdateDiaryResponse;
 import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
 import com.farmdiary.api.entity.user.User;
+import com.farmdiary.api.exception.DiaryApiException;
 import com.farmdiary.api.exception.ResourceNotFoundException;
 import com.farmdiary.api.repository.diary.DiaryRepository;
 import com.farmdiary.api.repository.user.UserRepository;
@@ -38,6 +39,11 @@ class DiaryServiceTest {
     final String nickname = "nickName";
     final String password = "passW0rd1!";
 
+    final Long otherUserId = 2L;
+    final String otherEmail = "email2@email2.com";
+    final String otherNickname = "otherNick";
+    final String otherPassword = "passW0Rd1!";
+
     // Diary 정보
     final Long diaryId = 1L;
     final String title = "title";
@@ -54,6 +60,7 @@ class DiaryServiceTest {
     final String requestWeather = Weather.SUNNY.getCode();
 
     User user;
+    User otherUser;
     Diary diary;
 
     @BeforeEach
@@ -64,6 +71,13 @@ class DiaryServiceTest {
                 .password(password)
                 .build();
         ReflectionTestUtils.setField(user, "id", userId);
+
+        otherUser = User.builder()
+                .email(otherEmail)
+                .nickName(otherEmail)
+                .password(otherPassword)
+                .build();
+        ReflectionTestUtils.setField(otherUser, "id", otherUserId);
 
         diary = Diary.builder()
                 .title(title)
@@ -76,6 +90,8 @@ class DiaryServiceTest {
                 .workDetail(workDetail)
                 .build();
         ReflectionTestUtils.setField(diary, "id", diaryId);
+
+        diary.setUser(user);
     }
 
     @AfterEach
@@ -137,11 +153,44 @@ class DiaryServiceTest {
 
         // when
         when(userRepository.existsById(userId)).thenReturn(Boolean.TRUE);
-        when(diaryRepository.findById(diaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
+        when(diaryRepository.findDiaryAndUserById(diaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
 
         // then
         Assertions.assertThrows(ResourceNotFoundException.class,
                 () -> diaryService.update(userId, diaryId, updateDiaryRequest));
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 수정시 다른 사용자의 영농일지를 수정하는 경우 DiaryApiException 반환")
+    void update_diary_other_user_diary_then_throw_DiaryApiException() {
+        // given
+        UpdateDiaryRequest updateDiaryRequest = new UpdateDiaryRequest(title, workDay, field, crop,
+                requestTemperature, requestWeather, precipitation, workDetail);
+
+        // when
+        when(userRepository.existsById(otherUserId)).thenReturn(Boolean.TRUE);
+        when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
+
+        // then
+        Assertions.assertThrows(DiaryApiException.class,
+                () -> diaryService.update(otherUserId, diaryId, updateDiaryRequest));
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 수정시 기온에 null값을 전달하더라도 영농일지 수정 성공")
+    void update_diary_temperature_null_then_update_success() {
+        // given
+        BigDecimal nullTemperature = null;
+        UpdateDiaryRequest updateDiaryRequest = new UpdateDiaryRequest(title, workDay, field, crop,
+                nullTemperature, requestWeather, precipitation, workDetail);
+
+        // when
+        when(userRepository.existsById(userId)).thenReturn(Boolean.TRUE);
+        when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
+        UpdateDiaryResponse updateDiaryResponse = diaryService.update(userId, diaryId, updateDiaryRequest);
+
+        // then
+        assertThat(updateDiaryResponse.getDiary_id()).isEqualTo(diaryId);
     }
     
     @Test
@@ -153,7 +202,7 @@ class DiaryServiceTest {
 
         // when
         when(userRepository.existsById(userId)).thenReturn(Boolean.TRUE);
-        when(diaryRepository.findById(diaryId)).thenReturn(Optional.of(diary));
+        when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
         UpdateDiaryResponse updateDiaryResponse = diaryService.update(userId, diaryId, updateDiaryRequest);
 
         // then
