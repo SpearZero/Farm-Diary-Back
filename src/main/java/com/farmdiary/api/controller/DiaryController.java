@@ -35,4 +35,11 @@ public class DiaryController {
                                     @AuthenticationPrincipal UserDetailsImpl user) {
         return new ResponseEntity<>(diaryService.update(user.getId(), diaryId, request), HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long diaryId,
+                                    @AuthenticationPrincipal UserDetailsImpl user) {
+        return new ResponseEntity<>(diaryService.delete(user.getId(), diaryId), HttpStatus.OK);
+    }
 }

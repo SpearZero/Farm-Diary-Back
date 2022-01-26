@@ -1,17 +1,12 @@
 package com.farmdiary.api.controller;
 
-import com.farmdiary.api.dto.diary.CreateDiaryRequest;
-import com.farmdiary.api.dto.diary.CreateDiaryResponse;
-import com.farmdiary.api.dto.diary.UpdateDiaryRequest;
-import com.farmdiary.api.dto.diary.UpdateDiaryResponse;
+import com.farmdiary.api.dto.diary.*;
 import com.farmdiary.api.entity.diary.Weather;
 import com.farmdiary.api.security.jwt.AuthEntryPointJwt;
 import com.farmdiary.api.security.jwt.JwtUtils;
 import com.farmdiary.api.security.service.UserDetailsImpl;
 import com.farmdiary.api.service.diary.DiaryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -283,6 +278,21 @@ class DiaryControllerTest {
         // then
         mvc.perform(MockMvcRequestBuilders.patch("/api/v1/diaries/"+diaryId)
                         .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diary_id").value(diaryId));
+    }
+
+    @Test
+    @DisplayName("영농일지 삭제 성공시 성공 응답 반환")
+    @WithUserDetails(value = email)
+    void delete_diary_success_then_return_delete_diary_response() throws Exception {
+        // when
+        when(diaryService.delete(userId, diaryId)).thenReturn(new DeleteDiaryResponse(diaryId));
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.delete("/api/v1/diaries/" + diaryId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
