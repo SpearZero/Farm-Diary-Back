@@ -34,8 +34,8 @@ public class DiaryService {
 
     public UpdateDiaryResponse update(Long userId, Long diaryId, UpdateDiaryRequest updateDiaryRequest) {
 
-        Diary diary = diaryRepository.findDiaryAndUserById(diaryId).orElseThrow(
-                () -> new ResourceNotFoundException("영농일지", "ID"));
+        Diary diary = diaryRepository.findDiaryAndUserById(diaryId)
+                .orElseThrow(() -> new ResourceNotFoundException("영농일지", "ID"));
 
         if (!userId.equals(diary.getUser().getId())) throw new DiaryApiException("작성자와 일치하지 않습니다.");
 
@@ -52,13 +52,24 @@ public class DiaryService {
 
     public DeleteDiaryResponse delete(Long userId, Long diaryId) {
 
-        Diary diary = diaryRepository.findDiaryAndUserById(diaryId).orElseThrow(
-                () -> new ResourceNotFoundException("영농일지", "ID"));
+        Diary diary = diaryRepository.findDiaryAndUserById(diaryId)
+                .orElseThrow(() -> new ResourceNotFoundException("영농일지", "ID"));
 
         if (!userId.equals(diary.getUser().getId())) throw new DiaryApiException("작성자와 일치하지 않습니다.");
 
         diaryRepository.delete(diary);
 
         return new DeleteDiaryResponse(diary.getId());
+    }
+
+    public GetDiaryResponse get(Long diaryId) {
+
+        Diary diary = diaryRepository.findDiaryAndUserById(diaryId)
+                .orElseThrow(() -> new ResourceNotFoundException("영농일지", "ID"));
+
+        User user = diary.getUser();
+        GetDiaryResponse diaryResponse = GetDiaryResponse.builder().user(user).diary(diary).build();
+
+        return diaryResponse;
     }
 }

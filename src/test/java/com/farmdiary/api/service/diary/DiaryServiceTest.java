@@ -209,12 +209,49 @@ class DiaryServiceTest {
 
     @Test
     @DisplayName("사용자가 영농일지 삭제시 영농일지 삭제 성공")
-    void delete_diary_then_update_success() {
+    void delete_diary_then_delete_success() {
         // when
         when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
         DeleteDiaryResponse updateDiaryResponse = diaryService.delete(userId, diaryId);
 
         // then
         assertThat(updateDiaryResponse.getDiary_id()).isEqualTo(diaryId);
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 조회시 존재하지 않는 영농일지면 ResourceNotFoundException 반환")
+    void get_diary_diary_not_exists_then_throw_ResoureceNotFoundException() {
+        // when
+        when(diaryRepository.findDiaryAndUserById(diaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
+
+        // then
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> diaryService.get(diaryId));
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 조회시 영농일지 조회 성공")
+    void get_diary_then_get_success() {
+        // when
+        when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
+        GetDiaryResponse getDiaryResponse = diaryService.get(diaryId);
+        GetDiaryResponse.DiaryUserResponse userResponse = getDiaryResponse.getUser();
+        GetDiaryResponse.DiaryResponse diaryResponse = getDiaryResponse.getDiary();
+
+        // then
+        // user
+        assertThat(userResponse.getUser_id()).isEqualTo(userId);
+        assertThat(userResponse.getEmail()).isEqualTo(email);
+        assertThat(userResponse.getNickname()).isEqualTo(nickname);
+
+        // diary
+        assertThat(diaryResponse.getDiary_id()).isEqualTo(diaryId);
+        assertThat(diaryResponse.getTitle()).isEqualTo(title);
+        assertThat(diaryResponse.getWork_day()).isEqualTo(workDay);
+        assertThat(diaryResponse.getField()).isEqualTo(field);
+        assertThat(diaryResponse.getCrop()).isEqualTo(crop);
+        assertThat(diaryResponse.getTemperature()).isEqualTo(temperature);
+        assertThat(diaryResponse.getWeather()).isEqualTo(weather.getViewName());
+        assertThat(diaryResponse.getPrecipitation()).isEqualTo(precipitation);
+        assertThat(diaryResponse.getWork_detail()).isEqualTo(workDetail);
     }
 }
