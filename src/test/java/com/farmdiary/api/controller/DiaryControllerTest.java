@@ -1,7 +1,9 @@
 package com.farmdiary.api.controller;
 
 import com.farmdiary.api.dto.diary.*;
+import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
+import com.farmdiary.api.entity.user.User;
 import com.farmdiary.api.security.jwt.AuthEntryPointJwt;
 import com.farmdiary.api.security.jwt.JwtUtils;
 import com.farmdiary.api.security.service.UserDetailsImpl;
@@ -19,6 +21,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -60,6 +63,9 @@ class DiaryControllerTest {
     final String email = "email@email.com";
     final String password = "password";
     final List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+
+    // User 정보
+    final String nickname = "nickName";
 
     @PostConstruct
     void userSetUp() {
@@ -297,5 +303,44 @@ class DiaryControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.diary_id").value(diaryId));
+    }
+    
+    @Test
+    @DisplayName("영농일지 조회시 조회 응답 반환")
+    void get_diary_success_then_return_get_diary_response() throws Exception{
+        // given
+        User user = User.builder().email(email).nickName(nickname).password(password).build();
+        ReflectionTestUtils.setField(user, "id", userId);
+
+        Diary diary = Diary.builder().title(title).workDay(workDay).field(field).crop(crop)
+                .temperature(temperature.doubleValue()).weather(Weather.weather(weather).get())
+                .precipitation(precipitation).workDetail(workDetail).build();
+        ReflectionTestUtils.setField(diary, "id", diaryId);
+        diary.setUser(user);
+
+        GetDiaryResponse getDiaryResponse = GetDiaryResponse.builder().user(user).diary(diary).build();
+
+        // when
+        when(diaryService.get(diaryId)).thenReturn(getDiaryResponse);
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.get("/api/v1/diaries/"+diaryId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user.user_id").value(userId))
+                .andExpect(jsonPath("$.user.email").value(email))
+                .andExpect(jsonPath("$.user.nickname").value(nickname))
+                .andExpect(jsonPath("$.diary.diary_id").value(diaryId))
+                .andExpect(jsonPath("$.diary.title").value(title))
+                .andExpect(jsonPath("$.diary.work_day").value(workDay.toString()))
+                .andExpect(jsonPath("$.diary.field").value(field))
+                .andExpect(jsonPath("$.diary.crop").value(crop))
+                .andExpect(jsonPath("$.diary.temperature").value(temperature.doubleValue()))
+                .andExpect(jsonPath("$.diary.weather").value(Weather.weather(weather).get().getViewName()))
+                .andExpect(jsonPath("$.diary.precipitation").value(precipitation))
+                .andExpect(jsonPath("$.diary.work_detail").value(workDetail));
+
+
     }
 }

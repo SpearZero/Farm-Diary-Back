@@ -42,4 +42,9 @@ public class DiaryController {
                                     @AuthenticationPrincipal UserDetailsImpl user) {
         return new ResponseEntity<>(diaryService.delete(user.getId(), diaryId), HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> get(@PathVariable("id") Long diaryId) {
+        return new ResponseEntity<>(diaryService.get(diaryId), HttpStatus.OK);
+    }
 }
