@@ -33,7 +33,6 @@ public class DiaryService {
     }
 
     public UpdateDiaryResponse update(Long userId, Long diaryId, UpdateDiaryRequest updateDiaryRequest) {
-
         Diary diary = diaryRepository.findDiaryAndUserById(diaryId)
                 .orElseThrow(() -> new ResourceNotFoundException("영농일지", "ID"));
 
@@ -51,7 +50,6 @@ public class DiaryService {
     }
 
     public DeleteDiaryResponse delete(Long userId, Long diaryId) {
-
         Diary diary = diaryRepository.findDiaryAndUserById(diaryId)
                 .orElseThrow(() -> new ResourceNotFoundException("영농일지", "ID"));
 
@@ -63,7 +61,6 @@ public class DiaryService {
     }
 
     public GetDiaryResponse get(Long diaryId) {
-
         Diary diary = diaryRepository.findDiaryAndUserById(diaryId)
                 .orElseThrow(() -> new ResourceNotFoundException("영농일지", "ID"));
 
