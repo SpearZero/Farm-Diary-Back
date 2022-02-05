@@ -1,5 +1,6 @@
 package com.farmdiary.api.repository.user;
 
+import com.farmdiary.api.config.QueryDslTestConfig;
 import com.farmdiary.api.entity.user.User;
 import com.farmdiary.api.repository.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 
 import java.util.Optional;
@@ -15,6 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 
 
+@Import(QueryDslTestConfig.class)
 @DisplayName("UserRepository 테스트")
 @DataJpaTest
 class UserRepositoryTest {
