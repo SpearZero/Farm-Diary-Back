@@ -12,13 +12,13 @@ import java.time.LocalDate;
 public class GetDiaryResponse {
 
     // 유저 정보
-    private DiaryUserResponse user;
+    private DiaryUserDto user;
     // 영농일지 정보
-    private DiaryResponse diary;
+    private DiaryDto diary;
 
     @Getter
     @AllArgsConstructor
-    public class DiaryUserResponse {
+    public class DiaryUserDto {
 
         private Long user_id;
         private String email;
@@ -27,7 +27,7 @@ public class GetDiaryResponse {
 
     @Getter
     @AllArgsConstructor
-    public class DiaryResponse {
+    public class DiaryDto {
 
         private Long diary_id;
         private String title;
@@ -42,8 +42,8 @@ public class GetDiaryResponse {
 
     @Builder
     public GetDiaryResponse(User user, Diary diary) {
-        this.user = new DiaryUserResponse(user.getId(), user.getEmail(), user.getNickname());
-        this.diary = new DiaryResponse(diary.getId(), diary.getTitle(), diary.getWorkDay(),
+        this.user = new DiaryUserDto(user.getId(), user.getEmail(), user.getNickname());
+        this.diary = new DiaryDto(diary.getId(), diary.getTitle(), diary.getWorkDay(),
                 diary.getField(), diary.getCrop(), diary.getTemperature(),
                 diary.getWeather().getViewName(), diary.getPrecipitation(), diary.getWorkDetail());
     }
