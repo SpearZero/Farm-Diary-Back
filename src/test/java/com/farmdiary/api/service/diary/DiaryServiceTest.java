@@ -234,8 +234,8 @@ class DiaryServiceTest {
         // when
         when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
         GetDiaryResponse getDiaryResponse = diaryService.get(diaryId);
-        GetDiaryResponse.DiaryUserResponse userResponse = getDiaryResponse.getUser();
-        GetDiaryResponse.DiaryResponse diaryResponse = getDiaryResponse.getDiary();
+        GetDiaryResponse.DiaryUserDto userResponse = getDiaryResponse.getUser();
+        GetDiaryResponse.DiaryDto diaryResponse = getDiaryResponse.getDiary();
 
         // then
         // user
