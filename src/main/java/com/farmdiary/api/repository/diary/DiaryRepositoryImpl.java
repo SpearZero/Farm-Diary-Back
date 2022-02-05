@@ -1,6 +1,6 @@
 package com.farmdiary.api.repository.diary;
 
-import com.farmdiary.api.dto.diary.SearchDiaryRequest;
+import com.farmdiary.api.dto.diary.GetDiariesRequest;
 import com.farmdiary.api.entity.diary.Diary;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,7 +21,7 @@ public class DiaryRepositoryImpl implements DiaryRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Diary> searchDiary(SearchDiaryRequest condition, Pageable pageable) {
+    public Page<Diary> searchDiary(GetDiariesRequest condition, Pageable pageable) {
         List<Diary> diaries = queryFactory
                 .select(diary)
                 .from(diary)

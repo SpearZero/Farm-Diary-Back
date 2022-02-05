@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchDiaryRequest {
+public class GetDiariesRequest {
 
     private String title;
     private String nickname;

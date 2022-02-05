@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class SearchDiaryDto {
+public class GetDiariesDto {
 
     // 영농일지 정보
     private Long diary_id;
