@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.HashMap;
@@ -24,6 +25,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorDetails> handleDiaryAPIException(DiaryApiException exception,
                                                                 WebRequest webRequest) {
 
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", exception.getMessage());
+
+        Result<Map> message = new Result<Map>(errors);
+        ErrorDetails errorDetails
+                = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception,
+                                                                        WebRequest webRequest) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", exception.getMessage());
 
@@ -58,6 +72,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
 
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorDetails> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException exception,
+            WebRequest webRequest) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", exception.getMessage());
+
+        Result<Map> message = new Result<Map>(errors);
+        ErrorDetails errorDetails
+                = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -96,5 +125,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDetails> handleGlobalException(Exception exception, WebRequest webRequest) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", exception.getMessage());
+
+        Result<Map> message = new Result<Map>(errors);
+        ErrorDetails errorDetails
+                = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 }

@@ -4,15 +4,19 @@ import com.farmdiary.api.dto.diary.CreateDiaryRequest;
 import com.farmdiary.api.dto.diary.UpdateDiaryRequest;
 import com.farmdiary.api.security.service.UserDetailsImpl;
 import com.farmdiary.api.service.diary.DiaryService;
+import com.farmdiary.api.utils.DiaryConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 
+@Validated
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequiredArgsConstructor
 @RestController
@@ -46,5 +50,15 @@ public class DiaryController {
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable("id") Long diaryId) {
         return new ResponseEntity<>(diaryService.get(diaryId), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getDiaries(
+            @RequestParam(value = "page_no", defaultValue = DiaryConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "page_size", defaultValue = DiaryConstants.DEFAULT_PAGE_SIZE, required = false) @Max(100) int pageSize,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "nickname", required = false) String nickName) {
+
+        return new ResponseEntity<>(diaryService.getDairies(pageNo, pageSize, title, nickName), HttpStatus.OK);
     }
 }
