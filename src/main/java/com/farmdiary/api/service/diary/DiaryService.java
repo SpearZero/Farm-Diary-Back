@@ -9,8 +9,14 @@ import com.farmdiary.api.exception.ResourceNotFoundException;
 import com.farmdiary.api.repository.diary.DiaryRepository;
 import com.farmdiary.api.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Transactional
@@ -42,9 +48,9 @@ public class DiaryService {
                 ? null : updateDiaryRequest.getTemperature().doubleValue();
 
         diary.update(updateDiaryRequest.getTitle(), updateDiaryRequest.getWork_day(), updateDiaryRequest.getField(),
-                        updateDiaryRequest.getCrop(), Weather.weather(updateDiaryRequest.getWeather()),
-                        temperature, updateDiaryRequest.getPrecipitation(),
-                        updateDiaryRequest.getWork_detail());
+                     updateDiaryRequest.getCrop(), Weather.weather(updateDiaryRequest.getWeather()),
+                     temperature, updateDiaryRequest.getPrecipitation(),
+                     updateDiaryRequest.getWork_detail());
 
         return new UpdateDiaryResponse(diary.getId());
     }
@@ -65,8 +71,22 @@ public class DiaryService {
                 .orElseThrow(() -> new ResourceNotFoundException("영농일지", "ID"));
 
         User user = diary.getUser();
-        GetDiaryResponse diaryResponse = GetDiaryResponse.builder().user(user).diary(diary).build();
 
-        return diaryResponse;
+        return GetDiaryResponse.builder().user(user).diary(diary).build();
+    }
+
+    public GetDiariesResponse getDairies(int pageNo, int pageSize, String title, String nickName) {
+        Pageable page = PageRequest.of(pageNo, pageSize);
+        GetDiariesRequest diariesRequest = new GetDiariesRequest(title, nickName);
+
+        Page<Diary> diaryPage = diaryRepository.searchDiary(diariesRequest, page);
+
+        List<GetDiariesDto> diaries = diaryPage.getContent().stream().map(diary ->
+                new GetDiariesDto(diary.getId(), diary.getTitle(), diary.getCreatedAt(), diary.getUser().getId(),
+                                  diary.getUser().getNickname())).collect(Collectors.toList());
+
+        return new GetDiariesResponse(diaryPage.getNumber(), diaryPage.getSize(), diaries,
+                                      diaryPage.getTotalElements(), diaryPage.getTotalPages(),
+                                      diaryPage.isLast());
     }
 }
