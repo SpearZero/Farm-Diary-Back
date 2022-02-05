@@ -1,8 +1,7 @@
 package com.farmdiary.api.repository.diary;
 
 import com.farmdiary.api.config.QueryDslTestConfig;
-import com.farmdiary.api.dto.diary.SearchDiaryDto;
-import com.farmdiary.api.dto.diary.SearchDiaryRequest;
+import com.farmdiary.api.dto.diary.GetDiariesRequest;
 import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
 import com.farmdiary.api.entity.user.GrantedRole;
@@ -12,9 +11,7 @@ import com.farmdiary.api.entity.user.UserRole;
 import com.farmdiary.api.repository.user.RoleRepository;
 import com.farmdiary.api.repository.user.UserRepository;
 import com.farmdiary.api.repository.user.UserRoleRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,7 +140,7 @@ class DiaryRepositoryTest {
         // given
         insertDiaries();
         Pageable page = PageRequest.of(0, 100);
-        SearchDiaryRequest request = new SearchDiaryRequest(searchTitle, null);
+        GetDiariesRequest request = new GetDiariesRequest(searchTitle, null);
 
         // when
         Page<Diary> diaryPage = diaryRepository.searchDiary(request, page);
@@ -161,7 +158,7 @@ class DiaryRepositoryTest {
         // given
         insertDiaries();
         Pageable page = PageRequest.of(0, 100);
-        SearchDiaryRequest request = new SearchDiaryRequest(null, searchNickname);
+        GetDiariesRequest request = new GetDiariesRequest(null, searchNickname);
 
         // when
         Page<Diary> diaryPage = diaryRepository.searchDiary(request, page);
@@ -181,7 +178,7 @@ class DiaryRepositoryTest {
         // given
         insertDiaries();
         Pageable page = PageRequest.of(0, 100);
-        SearchDiaryRequest request = new SearchDiaryRequest(searchTitle, searchNickname);
+        GetDiariesRequest request = new GetDiariesRequest(searchTitle, searchNickname);
 
         // when
         Page<Diary> diaryPage = diaryRepository.searchDiary(request, page);
@@ -200,7 +197,7 @@ class DiaryRepositoryTest {
         // given
         insertDiaries();
         Pageable page = PageRequest.of(0, 100);
-        SearchDiaryRequest request = new SearchDiaryRequest(null, null);
+        GetDiariesRequest request = new GetDiariesRequest(null, null);
 
         // when
         Page<Diary> diaryPage = diaryRepository.searchDiary(request, page);
