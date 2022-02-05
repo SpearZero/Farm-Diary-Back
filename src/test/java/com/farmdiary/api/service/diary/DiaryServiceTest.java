@@ -10,14 +10,22 @@ import com.farmdiary.api.repository.diary.DiaryRepository;
 import com.farmdiary.api.repository.user.UserRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -60,6 +68,12 @@ class DiaryServiceTest {
     User otherUser;
     Diary diary;
 
+    // diary리스트
+    List<Diary> diaries;
+    Pageable page;
+    final int pageNo = 0;
+    final int pageSize = 5;
+
     @BeforeEach
     void setUp() {
         user = User.builder()
@@ -91,9 +105,30 @@ class DiaryServiceTest {
         diary.setUser(user);
     }
 
+    void insertDiaries() {
+        diaries = new ArrayList<>();
+        for (int i = 2; i <= 11; i++) {
+            Diary diary = Diary.builder().title(title + i).workDay(workDay).field(field + i).crop(crop + i)
+                    .temperature(temperature).weather(weather).precipitation(precipitation).workDetail(workDetail + i)
+                    .build();
+            ReflectionTestUtils.setField(diary, "id", Long.valueOf(i));
+
+            if (i % 2 == 0) {
+                diary.setUser(user);
+            } else {
+                diary.setUser(otherUser);
+            }
+
+            diaries.add(diary);
+        }
+    }
+    
     @AfterEach
     void tearDown() {
-        diaryRepository.deleteAll();
+        user = null;
+        otherUser = null;
+        diary = null;
+        diaries = null;
     }
 
     @Test
@@ -253,5 +288,27 @@ class DiaryServiceTest {
         assertThat(diaryResponse.getWeather()).isEqualTo(weather.getViewName());
         assertThat(diaryResponse.getPrecipitation()).isEqualTo(precipitation);
         assertThat(diaryResponse.getWork_detail()).isEqualTo(workDetail);
+    }
+
+    @Test
+    @DisplayName("사용자가 영농일지 리스트 조회시 영농일지 리스트 반환")
+    void get_diaries_then_return_diaries() {
+        // given
+        insertDiaries();
+        page = PageRequest.of(pageNo, pageSize);
+        List<Diary> searchDiaries = diaries.stream().limit(5).collect(Collectors.toList());
+        Page<Diary> diaryPage = new PageImpl<>(searchDiaries, page, diaries.size());
+
+        // when
+        when(diaryRepository.searchDiary(any(GetDiariesRequest.class), any(Pageable.class))).thenReturn(diaryPage);
+        GetDiariesResponse getDiariesResponse = diaryService.getDairies(pageNo, pageSize, null, null);
+
+        // then
+        assertThat(getDiariesResponse.getContent().size()).isEqualTo(5);
+        assertThat(getDiariesResponse.getPage_no()).isEqualTo(0);
+        assertThat(getDiariesResponse.getPage_size()).isEqualTo(5);
+        assertThat(getDiariesResponse.getTotal_elements()).isEqualTo(10);
+        assertThat(getDiariesResponse.getTotal_pages()).isEqualTo(2);
+        assertThat(getDiariesResponse.getLast()).isEqualTo(false);
     }
 }
