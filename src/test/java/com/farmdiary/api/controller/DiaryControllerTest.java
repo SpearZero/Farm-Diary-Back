@@ -16,6 +16,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,9 +33,12 @@ import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -307,7 +314,7 @@ class DiaryControllerTest {
     
     @Test
     @DisplayName("영농일지 조회시 조회 응답 반환")
-    void get_diary_success_then_return_get_diary_response() throws Exception{
+    void get_diary_success_then_return_get_diary_response() throws Exception {
         // given
         User user = User.builder().email(email).nickName(nickname).password(password).build();
         ReflectionTestUtils.setField(user, "id", userId);
@@ -340,7 +347,58 @@ class DiaryControllerTest {
                 .andExpect(jsonPath("$.diary.weather").value(Weather.weather(weather).get().getViewName()))
                 .andExpect(jsonPath("$.diary.precipitation").value(precipitation))
                 .andExpect(jsonPath("$.diary.work_detail").value(workDetail));
+    }
 
+    List<Diary> setDiaries(List<Diary> diaries) {
+        User user = User.builder().email(email).nickName(nickname).password(password).build();
+        ReflectionTestUtils.setField(user, "id", userId);
 
+        for (int i = 1; i <= 5; i++) {
+            Diary diary = Diary.builder().title(title + i).workDay(workDay).field(field + i).crop(crop + i)
+                    .temperature(temperature.doubleValue()).weather(Weather.weather(weather).get())
+                    .precipitation(precipitation).workDetail(workDetail + i).build();
+            ReflectionTestUtils.setField(diary, "id", Long.valueOf(i));
+
+            diary.setUser(user);
+            diaries.add(diary);
+        }
+
+        return diaries;
+    }
+    
+    @Test
+    @DisplayName("영농일지 리스트 조회시 조회 응답 반환")
+    void get_diary_list_success_then_return_get_diary_list_response() throws Exception {
+        // given
+        List<Diary> diaries = new ArrayList<>();
+        setDiaries(diaries);
+        List<GetDiariesDto> getDiaries = diaries.stream().map(diary -> new GetDiariesDto(diary.getId(), diary.getTitle(),
+                diary.getCreatedAt(), diary.getUser().getId(), diary.getUser().getNickname())).collect(Collectors.toList());
+
+        Pageable page = PageRequest.of(0, 5);
+        Page<Diary> diaryPage = new PageImpl<>(diaries, page, diaries.size());
+
+        GetDiariesResponse getDiariesResponse = new GetDiariesResponse(diaryPage.getNumber(), diaryPage.getSize(),
+                getDiaries, diaryPage.getTotalElements(), diaryPage.getTotalPages(), diaryPage.isLast());
+
+        // when
+        when(diaryService.getDairies(0, 5, title, nickname)).thenReturn(getDiariesResponse);
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.get("/api/v1/diaries")
+                        .param("page_no", "0")
+                        .param("page_size", "5")
+                        .param("title", title)
+                        .param("nickname", nickname)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page_no").value(0))
+                .andExpect(jsonPath("$.page_size").value(5))
+                .andExpect(jsonPath("$.content", hasSize(5)))
+                .andExpect(jsonPath("$.total_elements").value(5))
+                .andExpect(jsonPath("$.total_pages").value(1))
+                .andExpect(jsonPath("$.last").value(true))
+                .andDo(print());
     }
 }

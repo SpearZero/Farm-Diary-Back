@@ -76,53 +76,19 @@ class DiaryServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = User.builder()
-                .email(email)
-                .nickName(nickname)
-                .password(password)
-                .build();
+        user = User.builder().email(email).nickName(nickname).password(password).build();
         ReflectionTestUtils.setField(user, "id", userId);
 
-        otherUser = User.builder()
-                .email(otherEmail)
-                .nickName(otherEmail)
-                .password(otherPassword)
-                .build();
+        otherUser = User.builder().email(otherEmail).nickName(otherEmail).password(otherPassword).build();
         ReflectionTestUtils.setField(otherUser, "id", otherUserId);
 
-        diary = Diary.builder()
-                .title(title)
-                .workDay(workDay)
-                .field(field)
-                .crop(crop)
-                .temperature(temperature)
-                .weather(weather)
-                .precipitation(precipitation)
-                .workDetail(workDetail)
-                .build();
+        diary = Diary.builder().title(title).workDay(workDay).field(field).crop(crop).temperature(temperature)
+                .weather(weather).precipitation(precipitation).workDetail(workDetail).build();
         ReflectionTestUtils.setField(diary, "id", diaryId);
 
         diary.setUser(user);
     }
 
-    void insertDiaries() {
-        diaries = new ArrayList<>();
-        for (int i = 2; i <= 11; i++) {
-            Diary diary = Diary.builder().title(title + i).workDay(workDay).field(field + i).crop(crop + i)
-                    .temperature(temperature).weather(weather).precipitation(precipitation).workDetail(workDetail + i)
-                    .build();
-            ReflectionTestUtils.setField(diary, "id", Long.valueOf(i));
-
-            if (i % 2 == 0) {
-                diary.setUser(user);
-            } else {
-                diary.setUser(otherUser);
-            }
-
-            diaries.add(diary);
-        }
-    }
-    
     @AfterEach
     void tearDown() {
         user = null;
@@ -288,6 +254,24 @@ class DiaryServiceTest {
         assertThat(diaryResponse.getWeather()).isEqualTo(weather.getViewName());
         assertThat(diaryResponse.getPrecipitation()).isEqualTo(precipitation);
         assertThat(diaryResponse.getWork_detail()).isEqualTo(workDetail);
+    }
+
+    void insertDiaries() {
+        diaries = new ArrayList<>();
+        for (int i = 2; i <= 11; i++) {
+            Diary diary = Diary.builder().title(title + i).workDay(workDay).field(field + i).crop(crop + i)
+                    .temperature(temperature).weather(weather).precipitation(precipitation).workDetail(workDetail + i)
+                    .build();
+            ReflectionTestUtils.setField(diary, "id", Long.valueOf(i));
+
+            if (i % 2 == 0) {
+                diary.setUser(user);
+            } else {
+                diary.setUser(otherUser);
+            }
+
+            diaries.add(diary);
+        }
     }
 
     @Test
