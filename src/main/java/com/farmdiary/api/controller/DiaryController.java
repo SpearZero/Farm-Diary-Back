@@ -17,7 +17,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 
 @Validated
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/diaries")
