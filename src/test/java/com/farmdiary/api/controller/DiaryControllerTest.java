@@ -386,8 +386,8 @@ class DiaryControllerTest {
 
         // then
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/diaries")
-                        .param("page_no", "0")
-                        .param("page_size", "5")
+                        .param("pageNo", "0")
+                        .param("pageSize", "5")
                         .param("title", title)
                         .param("nickname", nickname)
                         .contentType(MediaType.APPLICATION_JSON)

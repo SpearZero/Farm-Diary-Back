@@ -54,8 +54,8 @@ public class DiaryController {
 
     @GetMapping
     public ResponseEntity<?> getDiaries(
-            @RequestParam(value = "page_no", defaultValue = DiaryConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
-            @RequestParam(value = "page_size", defaultValue = DiaryConstants.DEFAULT_PAGE_SIZE, required = false) @Max(100) int pageSize,
+            @RequestParam(value = "pageNo", defaultValue = DiaryConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = DiaryConstants.DEFAULT_PAGE_SIZE, required = false) @Max(100) int pageSize,
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "nickname", required = false) String nickName) {
 
