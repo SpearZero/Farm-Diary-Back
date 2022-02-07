@@ -15,5 +15,4 @@ public class CreateDiaryCommentRequest {
     @NotBlank
     @Length(max = 128)
     private String comment;
-
 }
