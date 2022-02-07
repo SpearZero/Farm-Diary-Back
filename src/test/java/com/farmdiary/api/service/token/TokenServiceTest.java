@@ -49,6 +49,8 @@ class TokenServiceTest {
     final String password = "passW0rd1!";
     final Long userId = 1L;
 
+    final Long notExistsUserId = 2L;
+
     final String jwtSecret = "testSecret";
     final long jwtExpirationMs = 300000;
     final long jwtRefreshExpirationMs = 3000000;
@@ -125,10 +127,10 @@ class TokenServiceTest {
     @Test
     @DisplayName("리프레시토큰 생성시 사용자가 존재하지 않으면 ResourceNotFoundExceptio 반환")
     void generate_refreshToken_if_user_not_exists_then_throw_ResourceNotFoundException() {
-        when(userRepository.findById(userId)).thenThrow(new ResourceNotFoundException("사용자", "ID"));
+        when(userRepository.findById(notExistsUserId)).thenThrow(new ResourceNotFoundException("사용자", "ID"));
 
         // when, then
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> tokenService.createRefreshToken(userId));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> tokenService.createRefreshToken(notExistsUserId));
     }
     
     @Test

@@ -55,6 +55,8 @@ class DiaryServiceTest {
     final String otherNickname = "otherNick";
     final String otherPassword = "passW0Rd1!";
 
+    final Long notExistsUserId = 3L;
+
     // Diary 정보
     final Long diaryId = 1L;
     final String title = "title";
@@ -65,6 +67,8 @@ class DiaryServiceTest {
     final Weather weather = Weather.SUNNY;
     final Integer precipitation = 100;
     final String workDetail = "workDetail";
+
+    final Long notExistsDiaryId = 2L;
     
     // Diary 엔티티와 타입이 다른 CreateDiaryRequest 정보
     final BigDecimal requestTemperature = BigDecimal.valueOf(temperature);
@@ -111,10 +115,10 @@ class DiaryServiceTest {
                 requestTemperature, requestWeather, precipitation, workDetail);
 
         // when
-        when(userRepository.findById(userId)).thenThrow(new ResourceNotFoundException("사용자", "ID"));
+        when(userRepository.findById(notExistsUserId)).thenThrow(new ResourceNotFoundException("사용자", "ID"));
 
         // then
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> diaryService.save(userId, request));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> diaryService.save(notExistsUserId, request));
     }
 
     @Test
@@ -141,11 +145,11 @@ class DiaryServiceTest {
                 requestTemperature, requestWeather, precipitation, workDetail);
 
         // when
-        when(diaryRepository.findDiaryAndUserById(diaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
+        when(diaryRepository.findDiaryAndUserById(notExistsDiaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
 
         // then
         Assertions.assertThrows(ResourceNotFoundException.class,
-                () -> diaryService.update(userId, diaryId, updateDiaryRequest));
+                () -> diaryService.update(userId, notExistsDiaryId, updateDiaryRequest));
     }
     
     @Test
@@ -198,10 +202,10 @@ class DiaryServiceTest {
     @DisplayName("사용자가 영농일지 삭제시 존재하지 않는 영농일지면 ResourceNotFoundException 반환")
     void delete_diary_diary_not_exists_then_throw_ResoureceNotFoundException() {
         // when
-        when(diaryRepository.findDiaryAndUserById(diaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
+        when(diaryRepository.findDiaryAndUserById(notExistsDiaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
 
         // then
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> diaryService.delete(userId, diaryId));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> diaryService.delete(userId, notExistsDiaryId));
     }
 
     @Test
@@ -229,10 +233,10 @@ class DiaryServiceTest {
     @DisplayName("사용자가 영농일지 조회시 존재하지 않는 영농일지면 ResourceNotFoundException 반환")
     void get_diary_diary_not_exists_then_throw_ResoureceNotFoundException() {
         // when
-        when(diaryRepository.findDiaryAndUserById(diaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
+        when(diaryRepository.findDiaryAndUserById(notExistsDiaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
 
         // then
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> diaryService.get(diaryId));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> diaryService.get(notExistsDiaryId));
     }
     
     @Test
