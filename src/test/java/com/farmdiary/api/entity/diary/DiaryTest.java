@@ -4,9 +4,12 @@ import com.farmdiary.api.entity.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -33,21 +36,14 @@ class DiaryTest {
 
     @BeforeEach
     void setUpDiary() {
-        user = User.builder()
-                .nickName(nickName)
-                .email(email)
-                .password(password)
-                .build();
+        user = User.builder().nickName(nickName).email(email).password(password).build();
 
-        diary = Diary.builder().title(title)
-                .workDay(workDay)
-                .field(field)
-                .crop(crop)
-                .temperature(temperature)
-                .weather(weather.get())
-                .precipitation(precipitation)
-                .workDetail(workDetail)
-                .build();
+        diary = Diary.builder().title(title).workDay(workDay).field(field).crop(crop).temperature(temperature)
+                .weather(weather.get()).precipitation(precipitation).workDetail(workDetail).build();
+    }
+
+    static Stream<String> blankValue() {
+        return Stream.of("", " ", "  ");
     }
 
     @Test
@@ -77,12 +73,10 @@ class DiaryTest {
         assertThat(title).isEqualTo(diary.getTitle());
     }
 
-    @Test
+    @ParameterizedTest(name = "{index} - input title = {0}(blank)")
+    @MethodSource("blankValue")
     @DisplayName("영농일지 제목이 공백일 경우 변경되지 않음")
-    void update_diary_title_blank_then_diary_title_not_changed() {
-        // given
-        String changedTitle = " ";
-
+    void update_diary_title_blank_then_diary_title_not_changed(String changedTitle) {
         // when
         diary.update(changedTitle, workDay, field, crop, weather, temperature, precipitation, workDetail);
 
@@ -92,7 +86,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작업날짜 변경 확인")
-    void update_diary_workDay_then_changed_diary_workDay() {
+    void update_diary_workDay_then_diary_workDay_changed() {
         // given
         LocalDate changedWorkDay = LocalDate.of(2022,01,04);
 
@@ -119,7 +113,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작업필지 변경 확인")
-    void update_diary_field_then_changed_diary_field() {
+    void update_diary_field_then_diary_field_changed() {
         // given
         String changedField = "changedField";
 
@@ -144,12 +138,10 @@ class DiaryTest {
         assertThat(field).isEqualTo(diary.getField());
     }
 
-    @Test
+    @ParameterizedTest(name = "{index} - input field = {0}(blank)")
+    @MethodSource("blankValue")
     @DisplayName("영농일지 작업필지가 공백일 경우 변경되지 않음")
-    void update_diary_field_blank_then_diary_field_not_changed() {
-        // given
-        String changedField = " ";
-
+    void update_diary_field_blank_then_diary_field_not_changed(String changedField) {
         // when
         diary.update(title, workDay, changedField, crop, weather, temperature, precipitation, workDetail);
 
@@ -159,7 +151,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작목 변경 확인")
-    void update_diary_crop_then_changed_diary_crop() {
+    void update_diary_crop_then_diary_crop_changed() {
         // given
         String changedCrop = "changedCrop";
 
@@ -184,12 +176,10 @@ class DiaryTest {
         assertThat(crop).isEqualTo(diary.getCrop());
     }
 
-    @Test
+    @ParameterizedTest(name = "{index} - input crop = {0}(blank)")
+    @MethodSource("blankValue")
     @DisplayName("영농일지 작목이 공백일 경우 변경되지 않음")
-    void update_diary_crop_blank_then_diary_crop_not_changed() {
-        // given
-        String changedCrop = " ";
-
+    void update_diary_crop_blank_then_diary_crop_not_changed(String changedCrop) {
         // when
         diary.update(title, workDay, field, changedCrop, weather, temperature, precipitation, workDetail);
 
@@ -199,7 +189,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 기온 변경 확인")
-    void update_diary_temperature_then_changed_diary_temperature() {
+    void update_diary_temperature_then_diary_temperature_changed() {
         // given
         Double changedTemperature = 0.1;
 
@@ -226,7 +216,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 날씨 변경 확인")
-    void update_diary_weather_then_changed_diary_weather() {
+    void update_diary_weather_then_diary_weather_changed() {
         // given
         Optional<Weather> changedWeather = Optional.of(Weather.RAINY);
 
@@ -253,7 +243,7 @@ class DiaryTest {
     
     @Test
     @DisplayName("영농일지 강수량 변경 확인")
-    void update_diary_precipitation_then_changed_diary_precipitation() {
+    void update_diary_precipitation_then_diary_precipitation_changed() {
         // given
         Integer changedPrecipitation = 10;
 
@@ -293,7 +283,7 @@ class DiaryTest {
 
     @Test
     @DisplayName("영농일지 작업내용 변경 확인")
-    void update_diary_workDetail_then_changed_diary_workDetail() {
+    void update_diary_workDetail_then_diary_workDetail_changed() {
         // given
         String changedWorkDetail = "changedWorkDetail";
 
@@ -318,12 +308,10 @@ class DiaryTest {
         assertThat(workDetail).isEqualTo(diary.getWorkDetail());
     }
 
-    @Test
+    @ParameterizedTest(name = "{index} - input workDetail = {0}(blank)")
+    @MethodSource("blankValue")
     @DisplayName("영농일지 작업내용이 공백일 경우 변경되지 않음")
-    void update_diary_workDetail_blank_then_diary_workDetail_not_changed() {
-        // given
-        String changedWorkDetail = " ";
-
+    void update_diary_workDetail_blank_then_diary_workDetail_not_changed(String changedWorkDetail) {
         // when
         diary.update(title, workDay, field, crop, weather, temperature, precipitation, changedWorkDetail);
 
