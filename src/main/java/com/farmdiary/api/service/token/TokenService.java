@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class TokenService {
@@ -32,7 +33,6 @@ public class TokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
 
-    @Transactional
     public JwtResponse getToken(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -46,7 +46,6 @@ public class TokenService {
         return new JwtResponse(accessToken, refreshToken.getToken(), userDetails.getId(), userDetails.getEmail());
     }
 
-    @Transactional
     public RefreshToken createRefreshToken(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("사용자", "ID"));
         String generateRefreshToken = jwtUtils.generateRefreshToken(user.getEmail());
