@@ -115,6 +115,7 @@ class DiaryRepositoryTest {
         roleRepository.deleteAll();
         userRoleRepository.deleteAll();
         userRepository.deleteAll();
+        diaryRepository.deleteAll();
     }
 
     @Test
@@ -123,7 +124,7 @@ class DiaryRepositoryTest {
         insertDiary();
 
         // given
-        Long diaryId = 1l;
+        Long diaryId = diaryRepository.findAll().get(0).getId();
 
         // when
         Optional<Diary> diary = diaryRepository.findDiaryAndUserById(diaryId);

@@ -3,12 +3,15 @@ package com.farmdiary.api.dto.diary.comment.create;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -27,6 +30,26 @@ class CreateDiaryCommentRequestTest {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
+
+    static Stream<String> blankValue() {
+        return Stream.of(null, "", " ", "  ");
+    }
+    
+    @ParameterizedTest(name = "{index} - input comment = {0}")
+    @MethodSource("blankValue")
+    @DisplayName("영농일지 댓글내용에 null 또는 공백이 들어올 경우 검증 실패")
+    void CreateDiaryCommentRequest_diary_comment_null_or_blank_then_CreateDiaryCommentRequest_diary_comment_fail(
+            String nullOrBlank) {
+        // given
+        CreateDiaryCommentRequest request = new CreateDiaryCommentRequest(nullOrBlank);
+
+        // when
+        Set<ConstraintViolation<CreateDiaryCommentRequest>> violations = validator.validate(request);
+
+        // then
+        assertThat(violations.isEmpty()).isFalse();
+    }
+    
 
     @Test
     @DisplayName("영농일지 댓글내용 제한길이 초과시 검증 실패")
