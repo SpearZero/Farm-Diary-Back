@@ -22,7 +22,7 @@ class DiaryTest {
     final String field = "field";
     final String crop = "crop";
     final Double temperature = 0.0;
-    final Optional<Weather> weather = Optional.of(Weather.SUNNY);
+    final Weather weather = Weather.SUNNY;
     final Integer precipitation = 0;
     final String workDetail = "workDetail";
     
@@ -39,7 +39,7 @@ class DiaryTest {
         user = User.builder().nickName(nickName).email(email).password(password).build();
 
         diary = Diary.builder().title(title).workDay(workDay).field(field).crop(crop).temperature(temperature)
-                .weather(weather.get()).precipitation(precipitation).workDetail(workDetail).build();
+                .weather(weather).precipitation(precipitation).workDetail(workDetail).build();
     }
 
     static Stream<String> blankValue() {
@@ -218,27 +218,27 @@ class DiaryTest {
     @DisplayName("영농일지 날씨 변경 확인")
     void update_diary_weather_then_diary_weather_changed() {
         // given
-        Optional<Weather> changedWeather = Optional.of(Weather.RAINY);
+        Weather changedWeather = Weather.RAINY;
 
         // when
         diary.update(title, workDay, field, crop, changedWeather, temperature, precipitation, workDetail);
 
         // then
-        assertThat(weather.get()).isNotSameAs(diary.getWeather());
-        assertThat(changedWeather.get()).isSameAs(diary.getWeather());
+        assertThat(weather).isNotSameAs(diary.getWeather());
+        assertThat(changedWeather).isSameAs(diary.getWeather());
     }
 
     @Test
     @DisplayName("영농일지 날씨가 null일경우 변경되지 않음")
     void update_diary_weather_null_then_diary_weather_not_changed() {
         // given
-        Optional<Weather> changedWeather = Optional.empty();
+        Weather changedWeather = null;
 
         // when
         diary.update(title, workDay, field, crop, changedWeather, temperature, precipitation, workDetail);
 
         // then
-        assertThat(weather.get()).isSameAs(diary.getWeather());
+        assertThat(weather).isSameAs(diary.getWeather());
     }
     
     @Test

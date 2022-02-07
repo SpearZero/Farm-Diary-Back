@@ -168,12 +168,28 @@ class DiaryServiceTest {
     }
     
     @Test
-    @DisplayName("사용자가 영농일지 수정시 기온에 null값을 전달하더라도 영농일지 수정 성공")
+    @DisplayName("사용자가 영농일지 수정시 기온에 null 값을 전달하더라도 영농일지 수정 성공")
     void update_diary_temperature_null_then_update_success() {
         // given
         BigDecimal nullTemperature = null;
         UpdateDiaryRequest updateDiaryRequest = new UpdateDiaryRequest(title, workDay, field, crop,
                 nullTemperature, requestWeather, precipitation, workDetail);
+
+        // when
+        when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));
+        UpdateDiaryResponse updateDiaryResponse = diaryService.update(userId, diaryId, updateDiaryRequest);
+
+        // then
+        assertThat(updateDiaryResponse.getDiary_id()).isEqualTo(diaryId);
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 수정시 날씨에 null 값을 전달하더라도 영농일지 수정 성공")
+    void update_diary_weather_null_then_update_success() {
+        // given
+        String nullWeather = null;
+        UpdateDiaryRequest updateDiaryRequest = new UpdateDiaryRequest(title, workDay, field, crop,
+                requestTemperature, nullWeather, precipitation, workDetail);
 
         // when
         when(diaryRepository.findDiaryAndUserById(diaryId)).thenReturn(Optional.of(diary));

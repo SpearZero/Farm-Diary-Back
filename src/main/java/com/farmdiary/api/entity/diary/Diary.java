@@ -100,8 +100,10 @@ public class Diary extends BaseTimeEntity {
         }
     }
 
-    private void updateWeather(Optional<Weather> weather) {
-        this.weather = weather.orElseGet(this::getWeather);
+    private void updateWeather(Weather weather) {
+        if (null != weather && weather != this.weather) {
+            this.weather = weather;
+        }
     }
 
     private void updatePrecipitation(Integer precipitation) {
@@ -116,7 +118,7 @@ public class Diary extends BaseTimeEntity {
         }
     }
 
-    public void update(String title, LocalDate workDay, String field, String crop, Optional<Weather> weather,
+    public void update(String title, LocalDate workDay, String field, String crop, Weather weather,
                         Double temperature, Integer precipitation, String workDetail) {
         this.updateTitle(title);
         this.updateWorkDay(workDay);

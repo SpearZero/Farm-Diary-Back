@@ -55,10 +55,12 @@ public class DiaryService {
         Double temperature = null == updateDiaryRequest.getTemperature()
                 ? null : updateDiaryRequest.getTemperature().doubleValue();
 
+        // 영농일지 수정시에 null 값을 이용한다.
+        Weather weather = Weather.weather(updateDiaryRequest.getWeather()).orElseGet(() -> null);
+
         diary.update(updateDiaryRequest.getTitle(), updateDiaryRequest.getWork_day(), updateDiaryRequest.getField(),
-                     updateDiaryRequest.getCrop(), Weather.weather(updateDiaryRequest.getWeather()),
-                     temperature, updateDiaryRequest.getPrecipitation(),
-                     updateDiaryRequest.getWork_detail());
+                     updateDiaryRequest.getCrop(), weather, temperature,
+                     updateDiaryRequest.getPrecipitation(), updateDiaryRequest.getWork_detail());
 
         return new UpdateDiaryResponse(diary.getId());
     }
