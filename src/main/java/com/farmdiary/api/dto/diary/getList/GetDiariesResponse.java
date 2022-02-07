@@ -1,4 +1,4 @@
-package com.farmdiary.api.dto.diary;
+package com.farmdiary.api.dto.diary.getList;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

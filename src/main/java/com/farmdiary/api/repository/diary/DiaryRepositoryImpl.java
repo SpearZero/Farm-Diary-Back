@@ -1,6 +1,6 @@
 package com.farmdiary.api.repository.diary;
 
-import com.farmdiary.api.dto.diary.GetDiariesRequest;
+import com.farmdiary.api.dto.diary.getList.GetDiariesRequest;
 import com.farmdiary.api.entity.diary.Diary;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;

@@ -1,7 +1,7 @@
 package com.farmdiary.api.repository.diary;
 
 import com.farmdiary.api.config.QueryDslTestConfig;
-import com.farmdiary.api.dto.diary.GetDiariesRequest;
+import com.farmdiary.api.dto.diary.getList.GetDiariesRequest;
 import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
 import com.farmdiary.api.entity.user.GrantedRole;

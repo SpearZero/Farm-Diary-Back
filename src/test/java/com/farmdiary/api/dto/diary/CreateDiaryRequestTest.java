@@ -1,5 +1,6 @@
 package com.farmdiary.api.dto.diary;
 
+import com.farmdiary.api.dto.diary.create.CreateDiaryRequest;
 import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
 import org.assertj.core.api.Assertions;

@@ -1,5 +1,6 @@
 package com.farmdiary.api.dto.diary;
 
+import com.farmdiary.api.dto.diary.update.UpdateDiaryRequest;
 import com.farmdiary.api.entity.diary.Weather;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

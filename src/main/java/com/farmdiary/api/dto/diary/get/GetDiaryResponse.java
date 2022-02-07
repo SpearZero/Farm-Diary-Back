@@ -1,4 +1,4 @@
-package com.farmdiary.api.dto.diary;
+package com.farmdiary.api.dto.diary.get;
 
 import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.user.User;

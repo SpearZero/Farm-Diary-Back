@@ -1,7 +1,7 @@
 package com.farmdiary.api.controller;
 
-import com.farmdiary.api.dto.diary.CreateDiaryRequest;
-import com.farmdiary.api.dto.diary.UpdateDiaryRequest;
+import com.farmdiary.api.dto.diary.create.CreateDiaryRequest;
+import com.farmdiary.api.dto.diary.update.UpdateDiaryRequest;
 import com.farmdiary.api.security.service.UserDetailsImpl;
 import com.farmdiary.api.service.diary.DiaryService;
 import com.farmdiary.api.utils.DiaryConstants;

@@ -1,8 +1,8 @@
-package com.farmdiary.api.dto.diary;
+package com.farmdiary.api.dto.diary.create;
 
+import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.Weather;
 import com.farmdiary.api.validation.code.NullOrContainCode;
-import com.farmdiary.api.validation.string.NotWhiteSpace;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,43 +10,57 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateDiaryRequest {
+public class CreateDiaryRequest {
 
-    @NotWhiteSpace
+    @NotBlank
     @Length(max = 50)
     private String title;
 
-    @Nullable
+    @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate work_day;
 
-    @NotWhiteSpace
+    @NotBlank
     @Length(max = 70)
     private String field;
 
-    @NotWhiteSpace
+    @NotBlank
     @Length(max = 20)
     private String crop;
 
-    @Nullable
+    @NotNull
     @Digits(integer = 2, fraction = 2)
     private BigDecimal temperature;
 
     @NullOrContainCode(target = Weather.class, message = "유효한 값이 아닙니다.")
-    private String weather;
+    private String weather = Weather.ETC.getCode();
 
     @Nullable
     @Min(value = 0)
-    private Integer precipitation;
+    private Integer precipitation = 0;
 
-    @NotWhiteSpace
+    @NotBlank
     private String work_detail;
+
+    public Diary toEntity() {
+        Weather codeToWeather = Weather.weather(this.weather).get();
+
+        return Diary.builder()
+                .title(title)
+                .workDay(work_day)
+                .field(field)
+                .crop(crop)
+                .temperature(temperature.doubleValue())
+                .weather(codeToWeather)
+                .precipitation(precipitation)
+                .workDetail(work_detail)
+                .build();
+    }
 }
