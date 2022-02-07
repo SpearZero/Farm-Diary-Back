@@ -3,6 +3,7 @@ package com.farmdiary.api.entity.diary;
 import com.farmdiary.api.entity.BaseTimeEntity;
 import com.farmdiary.api.entity.user.User;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,4 +29,17 @@ public class DiaryComment extends BaseTimeEntity {
 
     @Column(length = 384, nullable = false)
     private String comment;
+
+    @Builder
+    public DiaryComment(User user, Diary diary, String comment) {
+        this.user = user;
+        this.diary = diary;
+        this.comment = comment;
+    }
+
+    public void updateComment(String comment) {
+        if (null != comment && !comment.isBlank()) {
+            this.comment = comment;
+        }
+    }
 }
