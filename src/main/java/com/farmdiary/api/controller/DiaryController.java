@@ -1,7 +1,12 @@
 package com.farmdiary.api.controller;
 
 import com.farmdiary.api.dto.diary.create.CreateDiaryRequest;
+import com.farmdiary.api.dto.diary.create.CreateDiaryResponse;
+import com.farmdiary.api.dto.diary.delete.DeleteDiaryResponse;
+import com.farmdiary.api.dto.diary.get.GetDiaryResponse;
+import com.farmdiary.api.dto.diary.getList.GetDiariesResponse;
 import com.farmdiary.api.dto.diary.update.UpdateDiaryRequest;
+import com.farmdiary.api.dto.diary.update.UpdateDiaryResponse;
 import com.farmdiary.api.security.service.UserDetailsImpl;
 import com.farmdiary.api.service.diary.DiaryService;
 import com.farmdiary.api.utils.DiaryConstants;
@@ -26,33 +31,33 @@ public class DiaryController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody CreateDiaryRequest request,
-                                  @AuthenticationPrincipal UserDetailsImpl user) {
+    public ResponseEntity<CreateDiaryResponse> save(@Valid @RequestBody CreateDiaryRequest request,
+                                                    @AuthenticationPrincipal UserDetailsImpl user) {
         return new ResponseEntity<>(diaryService.save(user.getId(), request), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable("id") Long diaryId,
-                                    @Valid @RequestBody UpdateDiaryRequest request,
-                                    @AuthenticationPrincipal UserDetailsImpl user) {
+    public ResponseEntity<UpdateDiaryResponse> update(@PathVariable("id") Long diaryId,
+                                                      @Valid @RequestBody UpdateDiaryRequest request,
+                                                      @AuthenticationPrincipal UserDetailsImpl user) {
         return new ResponseEntity<>(diaryService.update(user.getId(), diaryId, request), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long diaryId,
-                                    @AuthenticationPrincipal UserDetailsImpl user) {
+    public ResponseEntity<DeleteDiaryResponse> delete(@PathVariable("id") Long diaryId,
+                                                      @AuthenticationPrincipal UserDetailsImpl user) {
         return new ResponseEntity<>(diaryService.delete(user.getId(), diaryId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable("id") Long diaryId) {
+    public ResponseEntity<GetDiaryResponse> get(@PathVariable("id") Long diaryId) {
         return new ResponseEntity<>(diaryService.get(diaryId), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<?> getDiaries(
+    public ResponseEntity<GetDiariesResponse> getDiaries(
             @RequestParam(value = "pageNo", defaultValue = DiaryConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = DiaryConstants.DEFAULT_PAGE_SIZE, required = false) @Max(100) int pageSize,
             @RequestParam(value = "title", required = false) String title,

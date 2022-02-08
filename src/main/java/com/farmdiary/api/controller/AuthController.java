@@ -1,8 +1,11 @@
 package com.farmdiary.api.controller;
 
+import com.farmdiary.api.dto.token.JwtResponse;
 import com.farmdiary.api.dto.token.LoginRequest;
 import com.farmdiary.api.dto.token.RefreshTokenRequest;
+import com.farmdiary.api.dto.token.RefreshTokenResponse;
 import com.farmdiary.api.dto.user.SignUpRequest;
+import com.farmdiary.api.dto.user.SignUpResponse;
 import com.farmdiary.api.service.token.TokenService;
 import com.farmdiary.api.service.user.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +24,17 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/signin")
-    public ResponseEntity<?> signIn(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtResponse> signIn(@Valid @RequestBody LoginRequest loginRequest) {
         return new ResponseEntity<>(tokenService.getToken(loginRequest), HttpStatus.OK);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         return new ResponseEntity<>(authService.save(signUpRequest), HttpStatus.CREATED);
     }
 
     @PostMapping("/accesstoken")
-    public ResponseEntity<?> getAccessToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+    public ResponseEntity<RefreshTokenResponse> getAccessToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         return new ResponseEntity<>(tokenService.getNewAccessToken(refreshTokenRequest), HttpStatus.CREATED);
     }
 }
