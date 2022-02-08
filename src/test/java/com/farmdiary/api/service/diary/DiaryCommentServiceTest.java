@@ -2,6 +2,7 @@ package com.farmdiary.api.service.diary;
 
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentResponse;
+import com.farmdiary.api.dto.diary.comment.delete.DeleteDiaryCommentResponse;
 import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentResponse;
 import com.farmdiary.api.entity.diary.Diary;
@@ -145,7 +146,7 @@ class DiaryCommentServiceTest {
     
     @Test
     @DisplayName("사용자가 영농일지 댓글 수정시 댓글 작성자와 수정자가 다르면 DiaryApiException 반환")
-    void update_diary_comment_user_not_same_then_throw_ResourceNotFoundException() {
+    void update_diary_comment_user_not_same_then_throw_DiaryApiException() {
         // given
         UpdateDiaryCommentRequest request = new UpdateDiaryCommentRequest(comment);
 
@@ -160,7 +161,7 @@ class DiaryCommentServiceTest {
     
     @Test
     @DisplayName("사용자가 영농일지 댓글 수정시 조회된 영농일지와 댓글이 달린 영농일지가 다르면 DiaryApiException 반환")
-    void update_diary_comment_diary_not_same_then_throw_ResourceNotFoundException() {
+    void update_diary_comment_diary_not_same_then_throw_DiaryApiException() {
         // given
         UpdateDiaryCommentRequest request = new UpdateDiaryCommentRequest(comment);
 
@@ -183,6 +184,55 @@ class DiaryCommentServiceTest {
         when(diaryCommentRepository.findDiaryCommentAndUserAndDiaryById(diaryCommentId))
                 .thenReturn(Optional.of(diaryComment));
         UpdateDiaryCommentResponse response = diaryCommentService.update(userId, diaryId, diaryCommentId, request);
+
+        // then
+        assertThat(response.getDiary_id()).isEqualTo(diaryId);
+        assertThat(response.getComment_id()).isEqualTo(diaryCommentId);
+    }
+
+    @Test
+    @DisplayName("사용자가 영농일지 댓글 삭제시 존재하지 않는 댓글이면 ResourceNotFoundException 반환")
+    void delete_diary_comment_diary_comment_not_exists_then_throw_ResourceNotFoundException() {
+        // when
+        when(diaryCommentRepository.findDiaryCommentAndUserAndDiaryById(notExistsDiaryCommentId))
+                .thenThrow(new ResourceNotFoundException("영농일지 댓글", "ID"));
+
+        // then
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> diaryCommentService.delete(userId, diaryId, notExistsDiaryCommentId));
+    }
+
+    @Test
+    @DisplayName("사용자가 영농일지 댓글 삭제시 댓글 작성자와 삭제자가 다르면 DiaryApiException 반환")
+    void delete_diary_comment_user_not_same_then_throw_DiaryApiException() {
+        // when
+        when(diaryCommentRepository.findDiaryCommentAndUserAndDiaryById(diaryCommentId))
+                .thenReturn(Optional.of(diaryComment));
+
+        // then
+        Assertions.assertThrows(DiaryApiException.class,
+                () -> diaryCommentService.delete(notExistsUserId, diaryId, diaryCommentId));
+    }
+
+    @Test
+    @DisplayName("사용자가 영농일지 댓글 삭제시 조회된 영농일지와 댓글이 달린 영농일지가 다르면 DiaryApiException 반환")
+    void delete_diary_comment_diary_not_same_then_throw_DiaryApiException() {
+        // when
+        when(diaryCommentRepository.findDiaryCommentAndUserAndDiaryById(diaryCommentId))
+                .thenReturn(Optional.of(diaryComment));
+
+        // then
+        Assertions.assertThrows(DiaryApiException.class,
+                () -> diaryCommentService.delete(userId, notExistsDiaryId, diaryCommentId));
+    }
+
+    @Test
+    @DisplayName("사용자가 영농일지 댓글 삭제시 댓글 삭제 성공")
+    void delete_diary_comment_then_delete_success() {
+        // when
+        when(diaryCommentRepository.findDiaryCommentAndUserAndDiaryById(diaryCommentId))
+                .thenReturn(Optional.of(diaryComment));
+        DeleteDiaryCommentResponse response = diaryCommentService.delete(userId, diaryId, diaryCommentId);
 
         // then
         assertThat(response.getDiary_id()).isEqualTo(diaryId);
