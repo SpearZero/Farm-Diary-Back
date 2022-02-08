@@ -124,7 +124,6 @@ class DiaryCommentServiceTest {
         CreateDiaryCommentResponse response = diaryCommentService.save(userId, diaryId, request);
 
         // then
-        assertThat(response.getUser_id()).isEqualTo(userId);
         assertThat(response.getDiary_id()).isEqualTo(diaryId);
         assertThat(response.getComment_id()).isEqualTo(diaryCommentId);
     }
@@ -186,7 +185,6 @@ class DiaryCommentServiceTest {
         UpdateDiaryCommentResponse response = diaryCommentService.update(userId, diaryId, diaryCommentId, request);
 
         // then
-        assertThat(response.getUser_id()).isEqualTo(userId);
         assertThat(response.getDiary_id()).isEqualTo(diaryId);
         assertThat(response.getComment_id()).isEqualTo(diaryCommentId);
     }

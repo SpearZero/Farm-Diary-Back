@@ -33,7 +33,7 @@ public class DiaryCommentService {
         DiaryComment diaryComment = DiaryComment.builder().user(user).diary(diary)
                 .comment(createDiaryCommentRequest.getComment()).build();
 
-        return new CreateDiaryCommentResponse(user.getId(), diary.getId(), diaryCommentRepository.save(diaryComment).getId());
+        return new CreateDiaryCommentResponse(diary.getId(), diaryCommentRepository.save(diaryComment).getId());
     }
 
     public UpdateDiaryCommentResponse update(Long userId, Long diaryId, Long commentId,
@@ -49,6 +49,6 @@ public class DiaryCommentService {
 
         diaryComment.updateComment(updateDiaryCommentRequest.getComment());
 
-        return new UpdateDiaryCommentResponse(user.getId(), diary.getId(), diaryComment.getId());
+        return new UpdateDiaryCommentResponse(diary.getId(), diaryComment.getId());
     }
 }

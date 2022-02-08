@@ -7,7 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UpdateDiaryCommentResponse {
 
-    private Long user_id;
     private Long diary_id;
     private Long comment_id;
 }
