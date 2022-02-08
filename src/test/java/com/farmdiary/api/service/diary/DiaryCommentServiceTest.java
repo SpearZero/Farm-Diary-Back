@@ -2,10 +2,13 @@ package com.farmdiary.api.service.diary;
 
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentResponse;
+import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentRequest;
+import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentResponse;
 import com.farmdiary.api.entity.diary.Diary;
 import com.farmdiary.api.entity.diary.DiaryComment;
 import com.farmdiary.api.entity.diary.Weather;
 import com.farmdiary.api.entity.user.User;
+import com.farmdiary.api.exception.DiaryApiException;
 import com.farmdiary.api.exception.ResourceNotFoundException;
 import com.farmdiary.api.repository.diary.DiaryCommentRepository;
 import com.farmdiary.api.repository.diary.DiaryRepository;
@@ -57,6 +60,8 @@ class DiaryCommentServiceTest {
     final Long diaryCommentId = 1L;
     final String comment = "comment";
 
+    final Long notExistsDiaryCommentId = 2L;
+
     User user;
     Diary diary;
     DiaryComment diaryComment;
@@ -75,13 +80,7 @@ class DiaryCommentServiceTest {
         diaryComment = DiaryComment.builder().user(user).diary(diary).comment(comment).build();
         ReflectionTestUtils.setField(diaryComment, "id", diaryCommentId);
     }
-
-    @AfterEach
-    void tearDown() {
-        user = null;
-        diary = null;
-    }
-
+    
     @Test
     @DisplayName("사용자가 영농일지 댓글 작성시 존재하지 않는 사용자면 ResourceNotFoundException 반환")
     void save_diary_comment_user_not_exists_then_throw_ResourceNotFoundException() {
@@ -123,6 +122,68 @@ class DiaryCommentServiceTest {
         when(diaryCommentRepository.save(any(DiaryComment.class))).thenReturn(diaryComment);
 
         CreateDiaryCommentResponse response = diaryCommentService.save(userId, diaryId, request);
+
+        // then
+        assertThat(response.getUser_id()).isEqualTo(userId);
+        assertThat(response.getDiary_id()).isEqualTo(diaryId);
+        assertThat(response.getComment_id()).isEqualTo(diaryCommentId);
+    }
+
+    @Test
+    @DisplayName("사용자가 영농일지 댓글 수정시 존재하지 않는 댓글이면 ResourceNotFoundException 반환")
+    void update_diary_comment_diary_comment_not_exists_then_throw_ResourceNotFoundException() {
+        // given
+        UpdateDiaryCommentRequest request = new UpdateDiaryCommentRequest(comment);
+
+        // when
+        when(diaryCommentRepository.findDiaryCommentAndUserAndDiaryById(notExistsDiaryCommentId))
+                .thenThrow(new ResourceNotFoundException("사용자", "ID"));
+
+        // then
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> diaryCommentService.update(userId, diaryId, notExistsDiaryCommentId, request));
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 댓글 수정시 댓글 작성자와 수정자가 다르면 DiaryApiException 반환")
+    void update_diary_comment_user_not_same_then_throw_ResourceNotFoundException() {
+        // given
+        UpdateDiaryCommentRequest request = new UpdateDiaryCommentRequest(comment);
+
+        // when
+        when(diaryCommentRepository.findDiaryCommentAndUserAndDiaryById(diaryCommentId))
+                .thenReturn(Optional.of(diaryComment));
+
+        // then
+        Assertions.assertThrows(DiaryApiException.class,
+                () -> diaryCommentService.update(notExistsUserId, diaryId, diaryCommentId, request));
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 댓글 수정시 조회된 영농일지와 댓글이 달린 영농일지가 다르면 DiaryApiException 반환")
+    void update_diary_comment_diary_not_same_then_throw_ResourceNotFoundException() {
+        // given
+        UpdateDiaryCommentRequest request = new UpdateDiaryCommentRequest(comment);
+
+        // when
+        when(diaryCommentRepository.findDiaryCommentAndUserAndDiaryById(diaryCommentId))
+                .thenReturn(Optional.of(diaryComment));
+
+        // then
+        Assertions.assertThrows(DiaryApiException.class,
+                () -> diaryCommentService.update(userId, notExistsDiaryId, diaryCommentId, request));
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 댓글 수정시 댓글 수정 성공")
+    void update_diary_comment_then_update_success() {
+        // given
+        UpdateDiaryCommentRequest request = new UpdateDiaryCommentRequest(comment);
+
+        // when
+        when(diaryCommentRepository.findDiaryCommentAndUserAndDiaryById(diaryCommentId))
+                .thenReturn(Optional.of(diaryComment));
+        UpdateDiaryCommentResponse response = diaryCommentService.update(userId, diaryId, diaryCommentId, request);
 
         // then
         assertThat(response.getUser_id()).isEqualTo(userId);
