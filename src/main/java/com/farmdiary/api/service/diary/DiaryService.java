@@ -76,6 +76,7 @@ public class DiaryService {
         return new DeleteDiaryResponse(diary.getId());
     }
 
+    @Transactional(readOnly = true)
     public GetDiaryResponse get(Long diaryId) {
         Diary diary = diaryRepository.findDiaryAndUserById(diaryId)
                 .orElseThrow(() -> new ResourceNotFoundException("영농일지", "ID"));
@@ -85,6 +86,7 @@ public class DiaryService {
         return GetDiaryResponse.builder().user(user).diary(diary).build();
     }
 
+    @Transactional(readOnly = true)
     public GetDiariesResponse getDairies(int pageNo, int pageSize, String title, String nickName) {
         Pageable page = PageRequest.of(pageNo, pageSize);
         GetDiariesRequest diariesRequest = new GetDiariesRequest(title, nickName);
