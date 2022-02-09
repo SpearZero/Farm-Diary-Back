@@ -21,7 +21,7 @@ public class DiaryRepositoryImpl implements DiaryRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Diary> searchDiary(GetDiariesRequest condition, Pageable pageable) {
+    public Page<Diary> getDiaries(GetDiariesRequest condition, Pageable pageable) {
         List<Diary> diaries = queryFactory
                 .select(diary)
                 .from(diary)

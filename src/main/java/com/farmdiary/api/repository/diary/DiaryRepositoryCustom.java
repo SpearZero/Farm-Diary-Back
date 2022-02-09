@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface DiaryRepositoryCustom {
 
-    Page<Diary> searchDiary(GetDiariesRequest condition, Pageable pageable);
+    Page<Diary> getDiaries(GetDiariesRequest condition, Pageable pageable);
 }

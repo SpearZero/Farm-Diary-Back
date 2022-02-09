@@ -144,7 +144,7 @@ class DiaryRepositoryTest {
         GetDiariesRequest request = new GetDiariesRequest(searchTitle, null);
 
         // when
-        Page<Diary> diaryPage = diaryRepository.searchDiary(request, page);
+        Page<Diary> diaryPage = diaryRepository.getDiaries(request, page);
 
         // then
         List<Diary> result = diaryPage.getContent();
@@ -162,7 +162,7 @@ class DiaryRepositoryTest {
         GetDiariesRequest request = new GetDiariesRequest(null, searchNickname);
 
         // when
-        Page<Diary> diaryPage = diaryRepository.searchDiary(request, page);
+        Page<Diary> diaryPage = diaryRepository.getDiaries(request, page);
 
         // then
         List<Diary> result = diaryPage.getContent();
@@ -182,7 +182,7 @@ class DiaryRepositoryTest {
         GetDiariesRequest request = new GetDiariesRequest(searchTitle, searchNickname);
 
         // when
-        Page<Diary> diaryPage = diaryRepository.searchDiary(request, page);
+        Page<Diary> diaryPage = diaryRepository.getDiaries(request, page);
 
         // then
         List<Diary> result = diaryPage.getContent();
@@ -201,7 +201,7 @@ class DiaryRepositoryTest {
         GetDiariesRequest request = new GetDiariesRequest(null, null);
 
         // when
-        Page<Diary> diaryPage = diaryRepository.searchDiary(request, page);
+        Page<Diary> diaryPage = diaryRepository.getDiaries(request, page);
 
         // then
         assertThat(diaryPage.getTotalElements()).isEqualTo(51);

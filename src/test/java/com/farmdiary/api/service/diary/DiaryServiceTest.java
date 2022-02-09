@@ -310,7 +310,7 @@ class DiaryServiceTest {
         Page<Diary> diaryPage = new PageImpl<>(searchDiaries, page, diaries.size());
 
         // when
-        when(diaryRepository.searchDiary(any(GetDiariesRequest.class), any(Pageable.class))).thenReturn(diaryPage);
+        when(diaryRepository.getDiaries(any(GetDiariesRequest.class), any(Pageable.class))).thenReturn(diaryPage);
         GetDiariesResponse getDiariesResponse = diaryService.getDairies(pageNo, pageSize, null, null);
 
         // then

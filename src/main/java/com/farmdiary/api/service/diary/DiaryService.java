@@ -91,7 +91,7 @@ public class DiaryService {
         Pageable page = PageRequest.of(pageNo, pageSize);
         GetDiariesRequest diariesRequest = new GetDiariesRequest(title, nickName);
 
-        Page<Diary> diaryPage = diaryRepository.searchDiary(diariesRequest, page);
+        Page<Diary> diaryPage = diaryRepository.getDiaries(diariesRequest, page);
 
         List<GetDiariesDto> diaries = diaryPage.getContent().stream().map(diary ->
                 new GetDiariesDto(diary.getId(), diary.getTitle(), diary.getCreatedAt(), diary.getUser().getId(),
