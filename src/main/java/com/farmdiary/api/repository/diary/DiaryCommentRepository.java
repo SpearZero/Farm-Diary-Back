@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface DiaryCommentRepository extends JpaRepository<DiaryComment, Long> {
+public interface DiaryCommentRepository extends JpaRepository<DiaryComment, Long>, DiaryCommentRepositoryCustom {
 
     @Query("select dc from DiaryComment dc join fetch dc.user join fetch dc.diary where dc.id = :id")
     Optional<DiaryComment> findDiaryCommentAndUserAndDiaryById(@Param("id") Long id);

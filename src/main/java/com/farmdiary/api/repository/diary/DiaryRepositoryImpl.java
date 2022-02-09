@@ -25,7 +25,8 @@ public class DiaryRepositoryImpl implements DiaryRepositoryCustom{
         List<Diary> diaries = queryFactory
                 .select(diary)
                 .from(diary)
-                .leftJoin(diary.user, user).fetchJoin()
+                .leftJoin(diary.user, user)
+                .fetchJoin()
                 .where(titleContain(condition.getTitle()),
                     nicknameContain(condition.getNickname()))
                 .offset(pageable.getOffset())
@@ -36,9 +37,10 @@ public class DiaryRepositoryImpl implements DiaryRepositoryCustom{
         long total = queryFactory
                 .select(diary)
                 .from(diary)
-                .leftJoin(diary.user, user).fetchJoin()
+                .leftJoin(diary.user, user)
+                .fetchJoin()
                 .where(titleContain(condition.getTitle()),
-                        nicknameContain(condition.getNickname()))
+                    nicknameContain(condition.getNickname()))
                 .fetchCount();
 
         return PageableExecutionUtils.getPage(diaries, pageable, () -> total);
