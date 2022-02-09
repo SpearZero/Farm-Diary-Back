@@ -3,6 +3,7 @@ package com.farmdiary.api.service.diary;
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentResponse;
 import com.farmdiary.api.dto.diary.comment.delete.DeleteDiaryCommentResponse;
+import com.farmdiary.api.dto.diary.comment.getList.GetDiaryCommentsResponse;
 import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentResponse;
 import com.farmdiary.api.entity.diary.Diary;
@@ -19,10 +20,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -67,6 +75,12 @@ class DiaryCommentServiceTest {
     Diary diary;
     DiaryComment diaryComment;
 
+    // DiaryComment 리스트
+    List<DiaryComment> diaryComments = new ArrayList<>();
+    Pageable page;
+    final int pageNo = 0;
+    final int pageSize = 5;
+
     @BeforeEach
     void setUp() {
         user = User.builder().email(email).nickName(nickname).password(password).build();
@@ -80,6 +94,15 @@ class DiaryCommentServiceTest {
 
         diaryComment = DiaryComment.builder().user(user).diary(diary).comment(comment).build();
         ReflectionTestUtils.setField(diaryComment, "id", diaryCommentId);
+    }
+
+    @AfterEach
+    void tearDown() {
+        user = null;
+        diary = null;
+        diaryComment = null;
+        diaryComments = null;
+        page = null;
     }
     
     @Test
@@ -237,5 +260,47 @@ class DiaryCommentServiceTest {
         // then
         assertThat(response.getDiary_id()).isEqualTo(diaryId);
         assertThat(response.getComment_id()).isEqualTo(diaryCommentId);
+    }
+    
+    @Test
+    @DisplayName("사용자가 영농일지 댓글리스트 조회시 영농일지가 존재하지 않으면 ResourceNotFoundException 반환")
+    void get_diary_comments_diary_not_exists_then_throw_ResourceNotFoundException() {
+        // when
+        when(diaryRepository.existsById(notExistsDiaryId)).thenReturn(false);
+
+        // then
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> diaryCommentService.getDiaryComments(notExistsDiaryId, pageNo, pageSize));
+    }
+
+    void insertComments() {
+        for (int i = 0; i < 10; i++) {
+            DiaryComment diaryComment = DiaryComment.builder().user(user).diary(diary).comment(comment + i).build();
+            ReflectionTestUtils.setField(diaryComment, "id", Long.valueOf(i));
+            diaryComments.add(diaryComment);
+        }
+    }
+
+    @Test
+    @DisplayName("사용자가 영농일지 댓글 조회시 영농일지 댓글 리스트 반환")
+    void get_diary_comments_then_return_diary_comments() {
+        // given
+        insertComments();
+        page = PageRequest.of(pageNo, pageSize);
+        List<DiaryComment> comments = diaryComments.stream().limit(5).collect(Collectors.toList());
+        Page<DiaryComment> diaryCommentPage = new PageImpl<>(comments, page, diaryComments.size());
+
+        // when
+        when(diaryRepository.existsById(diaryId)).thenReturn(true);
+        when(diaryCommentRepository.getDiaryComments(diaryId, page)).thenReturn(diaryCommentPage);
+        GetDiaryCommentsResponse diaryCommentsResponse = diaryCommentService.getDiaryComments(diaryId, pageNo, pageSize);
+
+        // then
+        assertThat(diaryCommentsResponse.getContents().size()).isEqualTo(5);
+        assertThat(diaryCommentsResponse.getPage_no()).isEqualTo(pageNo);
+        assertThat(diaryCommentsResponse.getPage_size()).isEqualTo(pageSize);
+        assertThat(diaryCommentsResponse.getTotal_elements()).isEqualTo(10);
+        assertThat(diaryCommentsResponse.getTotal_pages()).isEqualTo(2);
+        assertThat(diaryCommentsResponse.getLast()).isEqualTo(false);
     }
 }

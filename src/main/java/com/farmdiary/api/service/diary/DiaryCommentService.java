@@ -3,6 +3,8 @@ package com.farmdiary.api.service.diary;
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentResponse;
 import com.farmdiary.api.dto.diary.comment.delete.DeleteDiaryCommentResponse;
+import com.farmdiary.api.dto.diary.comment.getList.GetDiaryCommentsDto;
+import com.farmdiary.api.dto.diary.comment.getList.GetDiaryCommentsResponse;
 import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentResponse;
 import com.farmdiary.api.entity.diary.Diary;
@@ -14,8 +16,14 @@ import com.farmdiary.api.repository.diary.DiaryCommentRepository;
 import com.farmdiary.api.repository.diary.DiaryRepository;
 import com.farmdiary.api.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -68,4 +76,21 @@ public class DiaryCommentService {
         return new DeleteDiaryCommentResponse(diary.getId(), diaryComment.getId());
     }
 
+    @Transactional(readOnly = true)
+    public GetDiaryCommentsResponse getDiaryComments(Long diaryId, int pageNo, int pageSize) {
+        if (!diaryRepository.existsById(diaryId)) throw new ResourceNotFoundException("영농일지", "ID");
+
+        Pageable page = PageRequest.of(pageNo, pageSize);
+
+        Page<DiaryComment> diaryCommentPage = diaryCommentRepository.getDiaryComments(diaryId, page);
+
+        List<GetDiaryCommentsDto> comments = diaryCommentPage.getContent().stream().map(comment ->
+                    new GetDiaryCommentsDto(comment.getId(), comment.getComment(), comment.getCreatedAt(),
+                                            comment.getUser().getId(), comment.getUser().getNickname()))
+                    .collect(Collectors.toList());
+
+        return new GetDiaryCommentsResponse(diaryId, diaryCommentPage.getNumber(), diaryCommentPage.getSize(),
+                                            comments, diaryCommentPage.getTotalElements(),
+                                            diaryCommentPage.getTotalPages(), diaryCommentPage.isLast());
+    }
 }
