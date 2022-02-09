@@ -79,7 +79,7 @@ class DiaryServiceTest {
     Diary diary;
 
     // diary리스트
-    List<Diary> diaries;
+    List<Diary> diaries = new ArrayList<>();
     Pageable page;
     final int pageNo = 0;
     final int pageSize = 5;
@@ -105,6 +105,7 @@ class DiaryServiceTest {
         otherUser = null;
         diary = null;
         diaries = null;
+        page = null;
     }
 
     @Test
@@ -247,7 +248,7 @@ class DiaryServiceTest {
     
     @Test
     @DisplayName("사용자가 영농일지 조회시 존재하지 않는 영농일지면 ResourceNotFoundException 반환")
-    void get_diary_diary_not_exists_then_throw_ResoureceNotFoundException() {
+    void get_diary_not_exists_then_throw_ResourceNotFoundException() {
         // when
         when(diaryRepository.findDiaryAndUserById(notExistsDiaryId)).thenThrow(new ResourceNotFoundException("영농일지", "ID"));
 
@@ -283,8 +284,7 @@ class DiaryServiceTest {
     }
 
     void insertDiaries() {
-        diaries = new ArrayList<>();
-        for (int i = 2; i <= 11; i++) {
+        for (int i = 0; i < 10; i++) {
             Diary diary = Diary.builder().title(title + i).workDay(workDay).field(field + i).crop(crop + i)
                     .temperature(temperature).weather(weather).precipitation(precipitation).workDetail(workDetail + i)
                     .build();
@@ -311,14 +311,14 @@ class DiaryServiceTest {
 
         // when
         when(diaryRepository.getDiaries(any(GetDiariesRequest.class), any(Pageable.class))).thenReturn(diaryPage);
-        GetDiariesResponse getDiariesResponse = diaryService.getDairies(pageNo, pageSize, null, null);
+        GetDiariesResponse diariesResponse = diaryService.getDairies(pageNo, pageSize, null, null);
 
         // then
-        assertThat(getDiariesResponse.getContent().size()).isEqualTo(5);
-        assertThat(getDiariesResponse.getPage_no()).isEqualTo(0);
-        assertThat(getDiariesResponse.getPage_size()).isEqualTo(5);
-        assertThat(getDiariesResponse.getTotal_elements()).isEqualTo(10);
-        assertThat(getDiariesResponse.getTotal_pages()).isEqualTo(2);
-        assertThat(getDiariesResponse.getLast()).isEqualTo(false);
+        assertThat(diariesResponse.getContents().size()).isEqualTo(5);
+        assertThat(diariesResponse.getPage_no()).isEqualTo(pageNo);
+        assertThat(diariesResponse.getPage_size()).isEqualTo(pageSize);
+        assertThat(diariesResponse.getTotal_elements()).isEqualTo(10);
+        assertThat(diariesResponse.getTotal_pages()).isEqualTo(2);
+        assertThat(diariesResponse.getLast()).isEqualTo(false);
     }
 }

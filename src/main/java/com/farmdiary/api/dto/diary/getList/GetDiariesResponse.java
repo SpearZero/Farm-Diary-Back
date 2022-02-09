@@ -14,7 +14,7 @@ public class GetDiariesResponse {
     private Integer page_no;
     private Integer page_size;
 
-    private List<GetDiariesDto> content;
+    private List<GetDiariesDto> contents;
 
     private Long total_elements;
     private Integer total_pages;

@@ -402,7 +402,7 @@ class DiaryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page_no").value(0))
                 .andExpect(jsonPath("$.page_size").value(5))
-                .andExpect(jsonPath("$.content", hasSize(5)))
+                .andExpect(jsonPath("$.contents", hasSize(5)))
                 .andExpect(jsonPath("$.total_elements").value(5))
                 .andExpect(jsonPath("$.total_pages").value(1))
                 .andExpect(jsonPath("$.last").value(true))
