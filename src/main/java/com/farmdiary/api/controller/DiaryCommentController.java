@@ -2,6 +2,8 @@ package com.farmdiary.api.controller;
 
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentResponse;
+import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentRequest;
+import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentResponse;
 import com.farmdiary.api.security.service.UserDetailsImpl;
 import com.farmdiary.api.service.diary.DiaryCommentService;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +28,14 @@ public class DiaryCommentController {
                                                            @Valid @RequestBody CreateDiaryCommentRequest request,
                                                            @AuthenticationPrincipal UserDetailsImpl user) {
         return new ResponseEntity<>(diaryCommentService.save(user.getId(), diaryId, request), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/{diaryId}/comments/{commentId}")
+    public ResponseEntity<UpdateDiaryCommentResponse> update(@PathVariable("diaryId") Long diaryId,
+                                                             @PathVariable("commentId") Long commentId,
+                                                             @Valid @RequestBody UpdateDiaryCommentRequest request,
+                                                             @AuthenticationPrincipal UserDetailsImpl user) {
+        return new ResponseEntity<>(diaryCommentService.update(user.getId(),diaryId, commentId, request), HttpStatus.OK);
     }
 }
