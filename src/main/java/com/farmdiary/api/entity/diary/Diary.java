@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,6 +50,9 @@ public class Diary extends BaseTimeEntity {
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String workDetail;
+
+    @OneToMany(mappedBy = "diary", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<DiaryComment> diaryComments = new ArrayList<>();
 
     @Builder
     public Diary(String title, LocalDate workDay, String field, String crop, Double temperature,
