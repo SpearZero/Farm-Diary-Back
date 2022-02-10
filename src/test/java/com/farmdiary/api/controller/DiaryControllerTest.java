@@ -53,12 +53,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(DiaryController.class)
 class DiaryControllerTest {
 
-    @Autowired private MockMvc mvc;
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired MockMvc mvc;
+    @Autowired ObjectMapper objectMapper;
 
     @MockBean DiaryService diaryService;
-    @MockBean private JwtUtils jwtUtils;
-    @MockBean private AuthEntryPointJwt authEntryPointJwt;
+    @MockBean JwtUtils jwtUtils;
+    @MockBean AuthEntryPointJwt authEntryPointJwt;
     @MockBean UserDetailsService userDetailsService;
 
     // Diary 정보
@@ -75,7 +75,7 @@ class DiaryControllerTest {
     // UserDetails 정보
     final Long userId = 1L;
     final String email = "email@email.com";
-    final String password = "password";
+    final String password = "passW0rd1!";
     final List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
 
     // User 정보
@@ -121,13 +121,15 @@ class DiaryControllerTest {
     @DisplayName("영농일지 작성 성공시 성공 응답 반환")
     @WithUserDetails(value = email)
     void post_diary_success_then_return_post_diary_response() throws Exception {
+        // given
         CreateDiaryRequest request = new CreateDiaryRequest(title, workDay, field, crop, temperature,
                 weather, precipitation, workDetail);
-
         String body = objectMapper.writeValueAsString(request);
 
+        // when
         when(diaryService.save(any(Long.class), any(CreateDiaryRequest.class))).thenReturn(new CreateDiaryResponse(diaryId));
 
+        // then
         mvc.perform(MockMvcRequestBuilders.post("/api/v1/diaries")
                         .content(body)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -140,7 +142,7 @@ class DiaryControllerTest {
     @DisplayName("영농일지 수정시 영농일지 제목만 들어올 경우 수정 성공시 성공 응답 반환")
     @WithUserDetails(value = email)
     void update_diary_title_then_return_update_diary_response() throws Exception {
-        // case
+        // given
         Map<String, String> map = new HashMap<>(){{ put("title", title); }};
         String body = objectMapper.writeValueAsString(map);
 
@@ -161,7 +163,7 @@ class DiaryControllerTest {
     @DisplayName("영농일지 수정시 영농일지 작업날짜만 들어올 경우 수정 성공시 성공 응답 반환")
     @WithUserDetails(value = email)
     void update_diary_workDay_then_return_update_diary_response() throws Exception {
-        // case
+        // given
         Map<String, String> map = new HashMap<>(){{ put("work_day", workDay.toString()); }};
         String body = objectMapper.writeValueAsString(map);
 
@@ -182,7 +184,7 @@ class DiaryControllerTest {
     @DisplayName("영농일지 수정시 영농일지 필지만 들어올 경우 수정 성공시 성공 응답 반환")
     @WithUserDetails(value = email)
     void update_diary_field_then_return_update_diary_response() throws Exception {
-        // case
+        // given
         Map<String, String> map = new HashMap<>(){{ put("field", field); }};
         String body = objectMapper.writeValueAsString(map);
 
@@ -203,7 +205,7 @@ class DiaryControllerTest {
     @DisplayName("영농일지 수정시 영농일지 작물만 들어올 경우 수정 성공시 성공 응답 반환")
     @WithUserDetails(value = email)
     void update_diary_crop_then_return_update_diary_response() throws Exception {
-        // case
+        // given
         Map<String, String> map = new HashMap<>(){{ put("crop", crop); }};
         String body = objectMapper.writeValueAsString(map);
 
@@ -224,7 +226,7 @@ class DiaryControllerTest {
     @DisplayName("영농일지 수정시 영농일지 기온만 들어올 경우 수정 성공시 성공 응답 반환")
     @WithUserDetails(value = email)
     void update_diary_temperature_then_return_update_diary_response() throws Exception {
-        // case
+        // given
         Map<String, String> map = new HashMap<>(){{ put("temperature", temperature.toString()); }};
         String body = objectMapper.writeValueAsString(map);
 
@@ -245,7 +247,7 @@ class DiaryControllerTest {
     @DisplayName("영농일지 수정시 영농일지 날씨만 들어올 경우 수정 성공시 성공 응답 반환")
     @WithUserDetails(value = email)
     void update_diary_weather_then_return_update_diary_response() throws Exception {
-        // case
+        // given
         Map<String, String> map = new HashMap<>(){{ put("weather", weather); }};
         String body = objectMapper.writeValueAsString(map);
 
@@ -266,7 +268,7 @@ class DiaryControllerTest {
     @DisplayName("영농일지 수정시 영농일지 강수량만 들어올 경우 수정 성공시 성공 응답 반환")
     @WithUserDetails(value = email)
     void update_diary_precipitation_then_return_update_diary_response() throws Exception {
-        // case
+        // given
         Map<String, String> map = new HashMap<>(){{ put("precipitation", precipitation.toString()); }};
         String body = objectMapper.writeValueAsString(map);
 
@@ -287,7 +289,7 @@ class DiaryControllerTest {
     @DisplayName("영농일지 수정시 영농일지 필지만 들어올 경우 수정 성공시 성공 응답 반환")
     @WithUserDetails(value = email)
     void update_diary_workDetail_then_return_update_diary_response() throws Exception {
-        // case
+        // given
         Map<String, String> map = new HashMap<>(){{ put("work_detail", workDetail); }};
         String body = objectMapper.writeValueAsString(map);
 
