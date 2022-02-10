@@ -105,11 +105,11 @@ class DiaryCommentRepositoryTest {
 
     @AfterEach
     void tearDown() {
+        diaryCommentRepository.deleteAll();
+        diaryRepository.deleteAll();
         userRoleRepository.deleteAll();
         roleRepository.deleteAll();
         userRepository.deleteAll();
-        diaryCommentRepository.deleteAll();
-        diaryRepository.deleteAll();
     }
 
     @Test
