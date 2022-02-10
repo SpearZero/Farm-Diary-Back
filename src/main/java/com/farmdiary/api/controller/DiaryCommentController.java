@@ -2,6 +2,7 @@ package com.farmdiary.api.controller;
 
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentResponse;
+import com.farmdiary.api.dto.diary.comment.delete.DeleteDiaryCommentResponse;
 import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentResponse;
 import com.farmdiary.api.security.service.UserDetailsImpl;
@@ -37,5 +38,13 @@ public class DiaryCommentController {
                                                              @Valid @RequestBody UpdateDiaryCommentRequest request,
                                                              @AuthenticationPrincipal UserDetailsImpl user) {
         return new ResponseEntity<>(diaryCommentService.update(user.getId(),diaryId, commentId, request), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/{diaryId}/comments/{commentId}")
+    public ResponseEntity<DeleteDiaryCommentResponse> delete(@PathVariable("diaryId") Long diaryId,
+                                                             @PathVariable("commentId") Long commentId,
+                                                             @AuthenticationPrincipal UserDetailsImpl user) {
+        return new ResponseEntity<>(diaryCommentService.delete(user.getId(), diaryId, commentId), HttpStatus.OK);
     }
 }

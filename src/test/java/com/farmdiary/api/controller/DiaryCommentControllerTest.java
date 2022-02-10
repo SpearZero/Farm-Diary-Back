@@ -2,6 +2,7 @@ package com.farmdiary.api.controller;
 
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.create.CreateDiaryCommentResponse;
+import com.farmdiary.api.dto.diary.comment.delete.DeleteDiaryCommentResponse;
 import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentRequest;
 import com.farmdiary.api.dto.diary.comment.update.UpdateDiaryCommentResponse;
 import com.farmdiary.api.security.jwt.AuthEntryPointJwt;
@@ -97,6 +98,23 @@ class DiaryCommentControllerTest {
         // then
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/diaries/"+diaryId+"/comments/"+commentId)
                         .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diary_id").value(diaryId))
+                .andExpect(jsonPath("$.comment_id").value(commentId));
+    }
+    
+    @Test
+    @DisplayName("영농일지 댓글 삭제 성공시 성공 응답 반환")
+    @WithUserDetails(value = email)
+    void delete_diary_comment_success_then_return_delete_diary_comment_response() throws Exception {
+        // when
+        when(diaryCommentService.delete(userId, diaryId, commentId))
+                .thenReturn(new DeleteDiaryCommentResponse(diaryId, commentId));
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.delete("/api/v1/diaries/"+diaryId+"/comments/"+commentId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
