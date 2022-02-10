@@ -15,6 +15,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,6 +73,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
 
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorDetails> handleConstraintViolationException(ConstraintViolationException exception,
+                                                                           WebRequest webRequest) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", exception.getMessage());
+
+        Result<Map> message = new Result<Map>(errors);
+        ErrorDetails errorDetails
+                = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

@@ -374,6 +374,20 @@ class DiaryControllerTest {
     }
     
     @Test
+    @DisplayName("영농일지 리스트 조회시 리스트 크기가 100이상일 경우 실패 응답 반환")
+    void get_diary_list_size_over_100_then_return_faiL_response() throws Exception {
+        // then
+        mvc.perform(MockMvcRequestBuilders.get("/api/v1/diaries")
+                        .param("pageNo", "0")
+                        .param("pageSize", "101")
+                        .param("title", title)
+                        .param("nickname", nickname)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+    
+    @Test
     @DisplayName("영농일지 리스트 조회시 조회 응답 반환")
     void get_diary_list_success_then_return_get_diary_list_response() throws Exception {
         // given
