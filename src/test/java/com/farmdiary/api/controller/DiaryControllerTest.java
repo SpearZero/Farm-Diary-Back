@@ -81,6 +81,11 @@ class DiaryControllerTest {
     // User 정보
     final String nickname = "nickName";
 
+    // Page 정ㅂ
+    final int pageNo = 0;
+    final int pageSize = 5;
+    final int overPageSize = 101;
+
     @PostConstruct
     void userSetUp() {
         when(userDetailsService.loadUserByUsername(email))
@@ -358,7 +363,7 @@ class DiaryControllerTest {
                 .andExpect(jsonPath("$.diary.work_detail").value(workDetail));
     }
 
-    List<Diary> setDiaries(List<Diary> diaries) {
+    void setDiaries(List<Diary> diaries) {
         User user = User.builder().email(email).nickName(nickname).password(password).build();
         ReflectionTestUtils.setField(user, "id", userId);
 
@@ -371,8 +376,6 @@ class DiaryControllerTest {
             diary.setUser(user);
             diaries.add(diary);
         }
-
-        return diaries;
     }
     
     @Test
@@ -380,8 +383,8 @@ class DiaryControllerTest {
     void get_diary_list_size_over_100_then_return_faiL_response() throws Exception {
         // then
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/diaries")
-                        .param("pageNo", "0")
-                        .param("pageSize", "101")
+                        .param("pageNo", String.valueOf(pageNo))
+                        .param("pageSize", String.valueOf(overPageSize))
                         .param("title", title)
                         .param("nickname", nickname)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -398,26 +401,26 @@ class DiaryControllerTest {
         List<GetDiariesDto> getDiaries = diaries.stream().map(diary -> new GetDiariesDto(diary.getId(), diary.getTitle(),
                 diary.getCreatedAt(), diary.getUser().getId(), diary.getUser().getNickname())).collect(Collectors.toList());
 
-        Pageable page = PageRequest.of(0, 5);
+        Pageable page = PageRequest.of(pageNo, pageSize);
         Page<Diary> diaryPage = new PageImpl<>(diaries, page, diaries.size());
 
         GetDiariesResponse getDiariesResponse = new GetDiariesResponse(diaryPage.getNumber(), diaryPage.getSize(),
                 getDiaries, diaryPage.getTotalElements(), diaryPage.getTotalPages(), diaryPage.isLast());
 
         // when
-        when(diaryService.getDairies(0, 5, title, nickname)).thenReturn(getDiariesResponse);
+        when(diaryService.getDairies(pageNo, pageSize, title, nickname)).thenReturn(getDiariesResponse);
 
         // then
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/diaries")
-                        .param("pageNo", "0")
-                        .param("pageSize", "5")
+                        .param("pageNo", String.valueOf(pageNo))
+                        .param("pageSize", String.valueOf(pageSize))
                         .param("title", title)
                         .param("nickname", nickname)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.page_no").value(0))
-                .andExpect(jsonPath("$.page_size").value(5))
+                .andExpect(jsonPath("$.page_no").value(pageNo))
+                .andExpect(jsonPath("$.page_size").value(pageSize))
                 .andExpect(jsonPath("$.contents", hasSize(5)))
                 .andExpect(jsonPath("$.total_elements").value(5))
                 .andExpect(jsonPath("$.total_pages").value(1))
