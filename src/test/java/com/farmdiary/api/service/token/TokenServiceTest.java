@@ -156,12 +156,12 @@ class TokenServiceTest {
         ReflectionTestUtils.setField(user, "id", userId);
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
+        // when, then
         when(jwtUtils.getUserNameFromJwtToken(any(String.class))).thenReturn(email);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(refreshTokenRepository.findById(userId))
                 .thenThrow(new RefreshTokenException("리프레시 토큰을 찾을 수 없습니다. 리프레시 토큰을 재발급 받으세요."));
 
-        // when, then
         Assertions.assertThrows(RefreshTokenException.class,
                 () -> tokenService.getNewAccessToken(refreshTokenRequest));
     }
@@ -171,20 +171,10 @@ class TokenServiceTest {
     void refreshToken_expired_get_accessToken_then_throw_RefreshTokenException() {
         // given
         String generatedRefreshToken = makeJwtToken(jwtRefreshExpirationMs);
-
-        User user = User.builder().email(email).build();
-        ReflectionTestUtils.setField(user, "id", userId);
-
-        RefreshToken refreshToken = RefreshToken.builder().id(userId).token(generatedRefreshToken).build();
-
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(jwtUtils.getUserNameFromJwtToken(any(String.class))).thenReturn(email);
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-        when(refreshTokenRepository.findById(userId)).thenReturn(Optional.of(refreshToken));
-        when(jwtUtils.validateJwtToken(generatedRefreshToken)).thenThrow(new ExpiredJwtException(null, null, null));
-
         // when, then
+        when(jwtUtils.getUserNameFromJwtToken(generatedRefreshToken)).thenThrow(new ExpiredJwtException(null, null, null));
         Assertions.assertThrows(RefreshTokenException.class, () -> tokenService.getNewAccessToken(refreshTokenRequest));
     }
 
@@ -193,20 +183,10 @@ class TokenServiceTest {
     void refreshToken_invalid_get_accessToken_then_throw_RefreshTokenException() {
         // given
         String generatedRefreshToken = makeJwtToken(jwtRefreshExpirationMs);
-
-        User user = User.builder().email(email).build();
-        ReflectionTestUtils.setField(user, "id", userId);
-
-        RefreshToken refreshToken = RefreshToken.builder().id(userId).token(generatedRefreshToken).build();
-
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(jwtUtils.getUserNameFromJwtToken(any(String.class))).thenReturn(email);
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-        when(refreshTokenRepository.findById(userId)).thenReturn(Optional.of(refreshToken));
-        when(jwtUtils.validateJwtToken(generatedRefreshToken)).thenThrow(new IllegalArgumentException());
-
         // when, then
+        when(jwtUtils.getUserNameFromJwtToken(generatedRefreshToken)).thenThrow(new IllegalArgumentException());
         Assertions.assertThrows(RefreshTokenException.class, () -> tokenService.getNewAccessToken(refreshTokenRequest));
     }
 
@@ -224,7 +204,7 @@ class TokenServiceTest {
 
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(jwtUtils.getUserNameFromJwtToken(any(String.class))).thenReturn(email);
+        when(jwtUtils.getUserNameFromJwtToken(existsRefreshToken)).thenReturn(email);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(refreshTokenRepository.findById(userId)).thenReturn(Optional.of(refreshToken));
         when(jwtUtils.generateAccessToken(email)).thenReturn(newAccessToken);

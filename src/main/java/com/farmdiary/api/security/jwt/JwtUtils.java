@@ -39,7 +39,19 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String token) {
+    /**
+     *
+     * @param token
+     * @return String
+     * @throw ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException
+     *
+     * 이 메서드를 사용하는 곳에서 예외를 처리해줘야 한다.
+     * jjwt 라이브러리는 토큰을 검증하는 도중에 예외를 발생시키기 때문에 토큰울 추출한 후 예외를 검증할 수 없다.
+     *
+     */
+    public String getUserNameFromJwtToken(String token) throws ExpiredJwtException, UnsupportedJwtException,
+            MalformedJwtException, SignatureException, IllegalArgumentException {
+
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token)
                 .getBody().getSubject();
     }
@@ -47,7 +59,7 @@ public class JwtUtils {
     /**
      *
      * @param authToken
-     * @return boolean
+     * @return String
      * @throw ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException
      *
      * 이 메서드를 사용하는 곳에서 예외를 처리해줘야 한다.
@@ -55,7 +67,7 @@ public class JwtUtils {
      *
      */
     public boolean validateJwtToken(String authToken) throws ExpiredJwtException, UnsupportedJwtException,
-            MalformedJwtException, SignatureException, IllegalArgumentException{
+            MalformedJwtException, SignatureException, IllegalArgumentException {
 
         Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
         return true;

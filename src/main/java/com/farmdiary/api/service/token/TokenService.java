@@ -50,47 +50,42 @@ public class TokenService {
 
         RefreshToken refreshToken = RefreshToken.builder().id(user.getId()).token(generateRefreshToken).build();
 
-        RefreshToken savedToken = refreshTokenRepository.save(refreshToken);
-
-        return savedToken;
+        return refreshTokenRepository.save(refreshToken);
     }
 
     @Transactional(readOnly = true)
     public RefreshTokenResponse getNewAccessToken(RefreshTokenRequest refreshTokenRequest) {
         String requestRefreshToken = refreshTokenRequest.getRefresh_token();
-        String email = jwtUtils.getUserNameFromJwtToken(requestRefreshToken);
+
+        // 잘못된 토큰일 경우 예외를 던진다.
+        String email = getEmailFromRefreshToken(requestRefreshToken);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자", "EMAIL"));
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getId())
                 .orElseThrow(() -> new RefreshTokenException("리프레시 토큰을 찾을 수 없습니다. 리프레시 토큰을 재발급 받으세요."));
 
-        // 잘못된 토큰일 경우 예외를 던진다.
-        RefreshToken validatedRefreshToken = validateRefreshToken(refreshToken);
-
         String newAccesstoken = jwtUtils.generateAccessToken(user.getEmail());
 
-        return new RefreshTokenResponse(newAccesstoken, validatedRefreshToken.getToken());
+        return new RefreshTokenResponse(newAccesstoken, refreshToken.getToken());
     }
 
     /**
      *
      * @param refreshToken
-     * @return RefreshToken
+     * @return String
      *
      * jjwt 라이브러리는 토큰을 검증하는 도중에 예외를 발생시키기 때문에
-     * 토큰을 추출하고 검증할 수 없어서 예외를 감싸서 던진다.
+     * 토큰을 검증하는 부분과 이메일을 추출하는 부분을 분리할 수 없다.
      *
      */
-    private RefreshToken validateRefreshToken(RefreshToken refreshToken) {
+    private String getEmailFromRefreshToken(String refreshToken) {
         try {
-            jwtUtils.validateJwtToken(refreshToken.getToken());
+            return jwtUtils.getUserNameFromJwtToken(refreshToken);
         } catch (ExpiredJwtException e) {
             throw new RefreshTokenException("리프레시토큰 시간이 만료되었습니다. 리프레시 토큰을 재발급 받으세요.");
         } catch (Exception e) {
             throw new RefreshTokenException("잘못된 리프레시토큰입니다.");
         }
-
-        return refreshToken;
     }
 }
