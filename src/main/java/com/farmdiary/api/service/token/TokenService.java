@@ -21,8 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -50,10 +48,7 @@ public class TokenService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("사용자", "ID"));
         String generateRefreshToken = jwtUtils.generateRefreshToken(user.getEmail());
 
-        RefreshToken refreshToken = RefreshToken.builder()
-                .user(user)
-                .token(generateRefreshToken)
-                .build();
+        RefreshToken refreshToken = RefreshToken.builder().id(user.getId()).token(generateRefreshToken).build();
 
         RefreshToken savedToken = refreshTokenRepository.save(refreshToken);
 
@@ -63,14 +58,16 @@ public class TokenService {
     @Transactional(readOnly = true)
     public RefreshTokenResponse getNewAccessToken(RefreshTokenRequest refreshTokenRequest) {
         String requestRefreshToken = refreshTokenRequest.getRefresh_token();
+        String email = jwtUtils.getUserNameFromJwtToken(requestRefreshToken);
 
-        RefreshToken refreshToken = refreshTokenRepository.findByToken(requestRefreshToken)
-                .orElseThrow(() -> new ResourceNotFoundException("리프레시토큰", requestRefreshToken));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("사용자", "EMAIL"));
+        RefreshToken refreshToken = refreshTokenRepository.findById(user.getId())
+                .orElseThrow(() -> new RefreshTokenException("리프레시 토큰을 찾을 수 없습니다. 리프레시 토큰을 재발급 받으세요."));
 
         // 잘못된 토큰일 경우 예외를 던진다.
         RefreshToken validatedRefreshToken = validateRefreshToken(refreshToken);
 
-        User user = validatedRefreshToken.getUser();
         String newAccesstoken = jwtUtils.generateAccessToken(user.getEmail());
 
         return new RefreshTokenResponse(newAccesstoken, validatedRefreshToken.getToken());
@@ -79,8 +76,7 @@ public class TokenService {
     /**
      *
      * @param refreshToken
-     * @return refreshToken
-     * @Throw RefreshTokenException
+     * @return RefreshToken
      *
      * jjwt 라이브러리는 토큰을 검증하는 도중에 예외를 발생시키기 때문에
      * 토큰을 추출하고 검증할 수 없어서 예외를 감싸서 던진다.
@@ -90,17 +86,11 @@ public class TokenService {
         try {
             jwtUtils.validateJwtToken(refreshToken.getToken());
         } catch (ExpiredJwtException e) {
-            refreshTokenRepository.delete(refreshToken);
             throw new RefreshTokenException("리프레시토큰 시간이 만료되었습니다. 리프레시 토큰을 재발급 받으세요.");
         } catch (Exception e) {
             throw new RefreshTokenException("잘못된 리프레시토큰입니다.");
         }
 
         return refreshToken;
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
     }
 }

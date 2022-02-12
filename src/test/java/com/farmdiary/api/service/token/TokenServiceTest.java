@@ -80,8 +80,7 @@ class TokenServiceTest {
 
         String jwtToken = makeJwtToken(jwtExpirationMs);
         String generatedRefreshToken = makeJwtToken(jwtRefreshExpirationMs);
-        RefreshToken refreshToken = RefreshToken.builder().token(generatedRefreshToken).user(user).build();
-        ReflectionTestUtils.setField(refreshToken, "id", tokenId);
+        RefreshToken refreshToken = RefreshToken.builder().id(userId).token(generatedRefreshToken).build();
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
@@ -102,30 +101,7 @@ class TokenServiceTest {
     }
 
     @Test
-    @DisplayName("리프레시토큰 값으로 리프레시 토큰 엔티티 조회시 조회 성공")
-    void serach_refreshToken_then_searched() {
-        // given
-        User user = User.builder().email(email).build();
-        ReflectionTestUtils.setField(user, "id", userId);
-
-        String generatedRefreshToken = makeJwtToken(jwtRefreshExpirationMs);
-        RefreshToken refreshToken = RefreshToken.builder().token(generatedRefreshToken).user(user).build();
-        ReflectionTestUtils.setField(refreshToken, "id", tokenId);
-
-        when(refreshTokenRepository.findByToken(generatedRefreshToken)).thenReturn(Optional.of(refreshToken));
-
-        // when
-        Optional<RefreshToken> getRefreshToken = tokenService.findByToken(generatedRefreshToken);
-
-        // then
-        assertThat(getRefreshToken).isNotNull();
-        assertThat(getRefreshToken.get().getId()).isEqualTo(tokenId);
-        assertThat(getRefreshToken.get().getUser()).isEqualTo(user);
-        assertThat(getRefreshToken.get().getToken()).isEqualTo(generatedRefreshToken);
-    }
-    
-    @Test
-    @DisplayName("리프레시토큰 생성시 사용자가 존재하지 않으면 ResourceNotFoundExceptio 반환")
+    @DisplayName("리프레시토큰 생성시 사용자가 존재하지 않으면 ResourceNotFoundException 반환")
     void generate_refreshToken_if_user_not_exists_then_throw_ResourceNotFoundException() {
         when(userRepository.findById(notExistsUserId)).thenThrow(new ResourceNotFoundException("사용자", "ID"));
 
@@ -135,13 +111,13 @@ class TokenServiceTest {
     
     @Test
     @DisplayName("리프레시토큰 생성시 사용자가 존재한다면 리프레시토큰 생성 성공")
-    void generate_refreshToken_if_user_exixts() {
+    void generate_refreshToken_if_user_exists() {
         // given
         User user = User.builder().email(email).build();
         ReflectionTestUtils.setField(user, "id", userId);
 
         String generatedRefreshToken = makeJwtToken(jwtRefreshExpirationMs);
-        RefreshToken refreshToken = RefreshToken.builder().user(user).token(generatedRefreshToken).build();
+        RefreshToken refreshToken = RefreshToken.builder().id(userId).token(generatedRefreshToken).build();
         ReflectionTestUtils.setField(refreshToken, "id", tokenId);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -151,25 +127,45 @@ class TokenServiceTest {
         // when
         RefreshToken savedRefreshToken = tokenService.createRefreshToken(userId);
 
-        assertThat(savedRefreshToken.getId()).isEqualTo(tokenId);
+        assertThat(savedRefreshToken.getId()).isEqualTo(userId);
         assertThat(savedRefreshToken.getToken()).isEqualTo(generatedRefreshToken);
-        assertThat(savedRefreshToken.getUser().getId()).isEqualTo(userId);
     }
     
     @Test
-    @DisplayName("리프레시토큰으로 액세스토큰 재발급시 기존에 리프레시토큰이 존재하지 않으면 ResourceNotFoundException 발생")
-    void not_have_refreshToken_get_accessToken_then_throw_ResourceNotFoundException() {
+    @DisplayName("리프레시토큰으로 액세스토큰 재발급시 사용자가 존재하지 않으면 ResourceNotFoundException 반환")
+    void not_exists_user_get_accessToken_then_throw_ResourceNotFoundException() {
         // given
+        User user = User.builder().email(email).build();
+        ReflectionTestUtils.setField(user, "id", userId);
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefresh_token()))
-                .thenThrow(new ResourceNotFoundException("리프레시토큰", refreshTokenRequest.getRefresh_token()));
+        // when
+        when(jwtUtils.getUserNameFromJwtToken(any(String.class))).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenThrow(new ResourceNotFoundException("사용자", "EMAIL"));
 
-        // when, then
+        // then
         Assertions.assertThrows(ResourceNotFoundException.class,
                 () -> tokenService.getNewAccessToken(refreshTokenRequest));
     }
-    
+
+    @Test
+    @DisplayName("리프레시토큰으로 액세스토큰 재발급시 기존에 리프레시토큰이 존재하지 않으면 RefreshTokenException 발생")
+    void not_have_refreshToken_get_accessToken_then_throw_RefreshTokenException() {
+        // given
+        User user = User.builder().email(email).build();
+        ReflectionTestUtils.setField(user, "id", userId);
+        RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
+
+        when(jwtUtils.getUserNameFromJwtToken(any(String.class))).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(refreshTokenRepository.findById(userId))
+                .thenThrow(new RefreshTokenException("리프레시 토큰을 찾을 수 없습니다. 리프레시 토큰을 재발급 받으세요."));
+
+        // when, then
+        Assertions.assertThrows(RefreshTokenException.class,
+                () -> tokenService.getNewAccessToken(refreshTokenRequest));
+    }
+
     @Test
     @DisplayName("리프레시토큰으로 액세스토큰 재발급시 기존 리프레시토큰의 기간이 만료되었다면 RefreshTokenException 발생")
     void refreshToken_expired_get_accessToken_then_throw_RefreshTokenException() {
@@ -179,13 +175,13 @@ class TokenServiceTest {
         User user = User.builder().email(email).build();
         ReflectionTestUtils.setField(user, "id", userId);
 
-        RefreshToken refreshToken = RefreshToken.builder().token(generatedRefreshToken).user(user).build();
-        ReflectionTestUtils.setField(refreshToken, "id", tokenId);
+        RefreshToken refreshToken = RefreshToken.builder().id(userId).token(generatedRefreshToken).build();
 
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefresh_token()))
-                .thenReturn(Optional.of(refreshToken));
+        when(jwtUtils.getUserNameFromJwtToken(any(String.class))).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(refreshTokenRepository.findById(userId)).thenReturn(Optional.of(refreshToken));
         when(jwtUtils.validateJwtToken(generatedRefreshToken)).thenThrow(new ExpiredJwtException(null, null, null));
 
         // when, then
@@ -201,13 +197,13 @@ class TokenServiceTest {
         User user = User.builder().email(email).build();
         ReflectionTestUtils.setField(user, "id", userId);
 
-        RefreshToken refreshToken = RefreshToken.builder().token(generatedRefreshToken).user(user).build();
-        ReflectionTestUtils.setField(refreshToken, "id", tokenId);
+        RefreshToken refreshToken = RefreshToken.builder().id(userId).token(generatedRefreshToken).build();
 
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefresh_token()))
-                .thenReturn(Optional.of(refreshToken));
+        when(jwtUtils.getUserNameFromJwtToken(any(String.class))).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(refreshTokenRepository.findById(userId)).thenReturn(Optional.of(refreshToken));
         when(jwtUtils.validateJwtToken(generatedRefreshToken)).thenThrow(new IllegalArgumentException());
 
         // when, then
@@ -224,13 +220,13 @@ class TokenServiceTest {
         User user = User.builder().email(email).build();
         ReflectionTestUtils.setField(user, "id", userId);
 
-        RefreshToken refreshToken = RefreshToken.builder().token(existsRefreshToken).user(user).build();
-        ReflectionTestUtils.setField(refreshToken, "id", tokenId);
+        RefreshToken refreshToken = RefreshToken.builder().id(userId).token(existsRefreshToken).build();
 
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(makeJwtToken(jwtRefreshExpirationMs));
 
-        when(refreshTokenRepository.findByToken(refreshTokenRequest.getRefresh_token()))
-                .thenReturn(Optional.of(refreshToken));
+        when(jwtUtils.getUserNameFromJwtToken(any(String.class))).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(refreshTokenRepository.findById(userId)).thenReturn(Optional.of(refreshToken));
         when(jwtUtils.generateAccessToken(email)).thenReturn(newAccessToken);
 
         // when
