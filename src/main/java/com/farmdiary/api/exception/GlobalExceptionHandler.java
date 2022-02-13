@@ -2,10 +2,12 @@ package com.farmdiary.api.exception;
 
 import com.farmdiary.api.exception.dto.ErrorDetails;
 import com.farmdiary.api.exception.dto.Result;
+import com.farmdiary.api.security.jwt.AuthErrorCode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -60,6 +62,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
 
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException exception,
+                                                                    WebRequest webRequest) {
+        String errorMessage = "접근이 거부되었습니다.";
+        Object ErrorCode = webRequest.getAttribute("authErrorCode", webRequest.SCOPE_REQUEST);
+        if ((null != ErrorCode) && (ErrorCode instanceof AuthErrorCode)) {
+            errorMessage = (AuthErrorCode) ErrorCode == AuthErrorCode.EXPIRED ? "접근이 거부되었습니다.(토큰 유효기간 만료)" : errorMessage;
+        }
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", errorMessage);
+
+        Result<Map> message = new Result<Map>(errors);
+        ErrorDetails errorDetails
+                = ErrorDetails.getErrorDetails(message, webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
