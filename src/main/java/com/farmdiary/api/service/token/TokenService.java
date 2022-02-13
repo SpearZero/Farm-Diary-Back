@@ -6,7 +6,7 @@ import com.farmdiary.api.dto.token.RefreshTokenRequest;
 import com.farmdiary.api.dto.token.RefreshTokenResponse;
 import com.farmdiary.api.entity.token.RefreshToken;
 import com.farmdiary.api.entity.user.User;
-import com.farmdiary.api.exception.RefreshTokenException;
+import com.farmdiary.api.exception.TokenException;
 import com.farmdiary.api.exception.ResourceNotFoundException;
 import com.farmdiary.api.repository.token.RefreshTokenRepository;
 import com.farmdiary.api.repository.user.UserRepository;
@@ -63,7 +63,7 @@ public class TokenService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자", "EMAIL"));
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getId())
-                .orElseThrow(() -> new RefreshTokenException("리프레시 토큰을 찾을 수 없습니다. 리프레시 토큰을 재발급 받으세요."));
+                .orElseThrow(() -> new TokenException("리프레시 토큰을 찾을 수 없습니다. 리프레시 토큰을 재발급 받으세요."));
 
         String newAccesstoken = jwtUtils.generateAccessToken(user.getEmail());
 
@@ -83,9 +83,9 @@ public class TokenService {
         try {
             return jwtUtils.getUserNameFromJwtToken(refreshToken);
         } catch (ExpiredJwtException e) {
-            throw new RefreshTokenException("리프레시토큰 시간이 만료되었습니다. 리프레시 토큰을 재발급 받으세요.");
+            throw new TokenException("리프레시토큰 시간이 만료되었습니다. 리프레시 토큰을 재발급 받으세요.");
         } catch (Exception e) {
-            throw new RefreshTokenException("잘못된 리프레시토큰입니다.");
+            throw new TokenException("잘못된 리프레시토큰입니다.");
         }
     }
 }

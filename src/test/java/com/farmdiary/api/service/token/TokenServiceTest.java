@@ -6,7 +6,7 @@ import com.farmdiary.api.dto.token.RefreshTokenRequest;
 import com.farmdiary.api.dto.token.RefreshTokenResponse;
 import com.farmdiary.api.entity.token.RefreshToken;
 import com.farmdiary.api.entity.user.User;
-import com.farmdiary.api.exception.RefreshTokenException;
+import com.farmdiary.api.exception.TokenException;
 import com.farmdiary.api.exception.ResourceNotFoundException;
 import com.farmdiary.api.repository.token.RefreshTokenRepository;
 import com.farmdiary.api.repository.user.UserRepository;
@@ -160,9 +160,9 @@ class TokenServiceTest {
         when(jwtUtils.getUserNameFromJwtToken(any(String.class))).thenReturn(email);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(refreshTokenRepository.findById(userId))
-                .thenThrow(new RefreshTokenException("리프레시 토큰을 찾을 수 없습니다. 리프레시 토큰을 재발급 받으세요."));
+                .thenThrow(new TokenException("리프레시 토큰을 찾을 수 없습니다. 리프레시 토큰을 재발급 받으세요."));
 
-        Assertions.assertThrows(RefreshTokenException.class,
+        Assertions.assertThrows(TokenException.class,
                 () -> tokenService.getNewAccessToken(refreshTokenRequest));
     }
 
@@ -175,7 +175,7 @@ class TokenServiceTest {
 
         // when, then
         when(jwtUtils.getUserNameFromJwtToken(generatedRefreshToken)).thenThrow(new ExpiredJwtException(null, null, null));
-        Assertions.assertThrows(RefreshTokenException.class, () -> tokenService.getNewAccessToken(refreshTokenRequest));
+        Assertions.assertThrows(TokenException.class, () -> tokenService.getNewAccessToken(refreshTokenRequest));
     }
 
     @Test
@@ -187,7 +187,7 @@ class TokenServiceTest {
 
         // when, then
         when(jwtUtils.getUserNameFromJwtToken(generatedRefreshToken)).thenThrow(new IllegalArgumentException());
-        Assertions.assertThrows(RefreshTokenException.class, () -> tokenService.getNewAccessToken(refreshTokenRequest));
+        Assertions.assertThrows(TokenException.class, () -> tokenService.getNewAccessToken(refreshTokenRequest));
     }
 
     @Test

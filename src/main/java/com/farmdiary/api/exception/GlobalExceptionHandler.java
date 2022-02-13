@@ -49,8 +49,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(RefreshTokenException.class)
-    public ResponseEntity<ErrorDetails> handleRefreshTokenException(RefreshTokenException exception,
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<ErrorDetails> handleRefreshTokenException(TokenException exception,
                                                                     WebRequest webRequest) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", exception.getMessage());
