@@ -39,6 +39,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -332,11 +334,13 @@ class DiaryControllerTest {
         // given
         User user = User.builder().email(email).nickName(nickname).password(password).build();
         ReflectionTestUtils.setField(user, "id", userId);
+        LocalDateTime createdAt = LocalDateTime.of(2022, Month.FEBRUARY, 14, 12,12, 12);
 
         Diary diary = Diary.builder().title(title).workDay(workDay).field(field).crop(crop)
                 .temperature(temperature.doubleValue()).weather(Weather.weather(weather).get())
                 .precipitation(precipitation).workDetail(workDetail).build();
         ReflectionTestUtils.setField(diary, "id", diaryId);
+        ReflectionTestUtils.setField(diary, "createdAt", createdAt);
         diary.setUser(user);
 
         GetDiaryResponse getDiaryResponse = GetDiaryResponse.builder().user(user).diary(diary).build();
@@ -360,7 +364,9 @@ class DiaryControllerTest {
                 .andExpect(jsonPath("$.diary.temperature").value(temperature.doubleValue()))
                 .andExpect(jsonPath("$.diary.weather").value(Weather.weather(weather).get().getViewName()))
                 .andExpect(jsonPath("$.diary.precipitation").value(precipitation))
-                .andExpect(jsonPath("$.diary.work_detail").value(workDetail));
+                .andExpect(jsonPath("$.diary.work_detail").value(workDetail))
+                .andExpect(jsonPath("$.diary.created_at").value(createdAt.toString()))
+                .andDo(print());
     }
 
     void setDiaries(List<Diary> diaries) {

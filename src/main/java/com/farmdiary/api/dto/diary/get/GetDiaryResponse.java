@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 public class GetDiaryResponse {
@@ -38,6 +39,7 @@ public class GetDiaryResponse {
         private String weather;
         private Integer precipitation;
         private String work_detail;
+        private LocalDateTime created_at;
     }
 
     @Builder
@@ -45,6 +47,7 @@ public class GetDiaryResponse {
         this.user = new DiaryUserDto(user.getId(), user.getEmail(), user.getNickname());
         this.diary = new DiaryDto(diary.getId(), diary.getTitle(), diary.getWorkDay(),
                 diary.getField(), diary.getCrop(), diary.getTemperature(),
-                diary.getWeather().getViewName(), diary.getPrecipitation(), diary.getWorkDetail());
+                diary.getWeather().getViewName(), diary.getPrecipitation(), diary.getWorkDetail(),
+                diary.getCreatedAt());
     }
 }
