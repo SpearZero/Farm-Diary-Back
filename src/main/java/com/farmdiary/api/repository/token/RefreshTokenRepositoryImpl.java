@@ -22,7 +22,6 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
     private final RedisTemplate redisTemplate;
 
-
     public RefreshToken save(RefreshToken refreshToken) {
 
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
