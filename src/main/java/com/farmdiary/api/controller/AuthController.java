@@ -23,7 +23,7 @@ public class AuthController {
     private final TokenService tokenService;
     private final AuthService authService;
 
-    @GetMapping("/signin")
+    @PostMapping("/signin")
     public ResponseEntity<JwtResponse> signIn(@Valid @RequestBody LoginRequest loginRequest) {
         return new ResponseEntity<>(tokenService.getToken(loginRequest), HttpStatus.OK);
     }

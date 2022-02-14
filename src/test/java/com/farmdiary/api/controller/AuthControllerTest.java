@@ -83,7 +83,7 @@ class AuthControllerTest {
                 new JwtResponse(makeJwtToken(jwtExpirationMs), makeJwtToken(jwtRefreshExpirationMs), userId, email));
 
         // when, then
-        mvc.perform(MockMvcRequestBuilders.get("/api/v1/auth/signin")
+        mvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/signin")
                 .content(body)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
