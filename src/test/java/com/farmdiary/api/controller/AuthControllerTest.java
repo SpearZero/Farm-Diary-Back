@@ -34,25 +34,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AuthController.class)
 class AuthControllerTest {
 
-    @Autowired private MockMvc mvc;
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired MockMvc mvc;
+    @Autowired ObjectMapper objectMapper;
 
-    @MockBean private AuthService authService;
-    @MockBean private TokenService tokenService;
-    @MockBean private UserDetailsServiceImpl userdetailsService;
-    @MockBean private JwtUtils jwtUtils;
-    @MockBean private AuthEntryPointJwt authEntryPointJwt;
+    @MockBean AuthService authService;
+    @MockBean TokenService tokenService;
+    @MockBean UserDetailsServiceImpl userdetailsService;
+    @MockBean JwtUtils jwtUtils;
+    @MockBean AuthEntryPointJwt authEntryPointJwt;
 
-    private final String nickname = "nickname";
-    private final String email = "email@email.com";
-    private final String password = "password0A!";
-    private final Long userId = 1L;
+    final String nickname = "nickname";
+    final String email = "email@email.com";
+    final String password = "password0A!";
+    final Long userId = 1L;
 
-    private final String jwtSecret = "testSecret";
-    private final long jwtExpirationMs = 300000;
-    private final long jwtRefreshExpirationMs = 3000000;
+    final String jwtSecret = "testSecret";
+    final long jwtExpirationMs = 300000;
+    final long jwtRefreshExpirationMs = 3000000;
 
-    private final String type = "Bearer";
+    final String type = "Bearer";
 
     @Test
     @DisplayName("회원가입 성공시 회원가입 성공 응답 반환")
