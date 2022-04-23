@@ -20,7 +20,7 @@
 - Amazon SES
 - Amazon S3
 - Amazon EC2
-- Ngingx
+- Nginx
 - Jenkins
 --------------------
 
