@@ -20,6 +20,9 @@ class CreateDiaryCommentRequestTest {
 
     static Validator validator;
 
+    final String NOT_BLANK = "NotBlank";
+    final String LENGTH = "Length";
+
     final String comment = "comment";
     // 129글자
     final String invalidComment = "commentcommentcommentcommentcommentcommentcommentcommentcommentcomment" +
@@ -44,10 +47,11 @@ class CreateDiaryCommentRequestTest {
         CreateDiaryCommentRequest request = new CreateDiaryCommentRequest(nullOrBlank);
 
         // when
-        Set<ConstraintViolation<CreateDiaryCommentRequest>> violations = validator.validate(request);
+        ConstraintViolation<CreateDiaryCommentRequest> violation = validator.validate(request).stream().findFirst().get();
 
         // then
-        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("comment");
+        assertThat(violation.getMessageTemplate()).contains(NOT_BLANK);
     }
     
 
@@ -58,10 +62,11 @@ class CreateDiaryCommentRequestTest {
         CreateDiaryCommentRequest request = new CreateDiaryCommentRequest(invalidComment);
 
         // when
-        Set<ConstraintViolation<CreateDiaryCommentRequest>> violations = validator.validate(request);
+        ConstraintViolation<CreateDiaryCommentRequest> violation = validator.validate(request).stream().findFirst().get();
 
         // then
-        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("comment");
+        assertThat(violation.getMessageTemplate()).contains(LENGTH);
     }
     
     @Test
